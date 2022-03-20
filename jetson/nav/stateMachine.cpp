@@ -149,7 +149,6 @@ void StateMachine::run()
             case NavState::SearchTurn:
             case NavState::SearchDrive:
             case NavState::TurnToTarget:
-            case NavState::TurnedToTargetWait:
             case NavState::DriveToTarget:
             {
                 nextState = mSearchStateMachine->run();
@@ -167,38 +166,10 @@ void StateMachine::run()
 
             case NavState::ChangeSearchAlg:
             {
-                static int searchFails = 0;
                 static double visionDistance = mRoverConfig[ "computerVision" ][ "visionDistance" ].GetDouble();
-
-                switch( mRoverConfig[ "search" ][ "order" ][ searchFails % mRoverConfig[ "search" ][ "numSearches" ].GetInt() ].GetInt() )
-                {
-                    case 0:
-                    {
-                        setSearcher(SearchType::SPIRALOUT, mRover, mRoverConfig);
-                        break;
-                    }
-                    case 1:
-                    {
-                        setSearcher(SearchType::SPIRALOUT, mRover, mRoverConfig);
-                        break;
-                    }
-                    case 2:
-                    {
-                        setSearcher(SearchType::SPIRALOUT, mRover, mRoverConfig);
-                        break;
-                    }
-                    default:
-                    {
-                        setSearcher(SearchType::SPIRALOUT, mRover, mRoverConfig);
-                        break;
-                    }
-                }
+                setSearcher(SearchType::SPIRALOUT, mRover, mRoverConfig);
+                
                 mSearchStateMachine->initializeSearch( mRover, mRoverConfig, visionDistance );
-                if( searchFails % 2 == 1 && visionDistance > 0.5 )
-                {
-                    visionDistance *= 0.5;
-                }
-                searchFails += 1;
                 nextState = NavState::SearchTurn;
                 break;
             }
@@ -279,7 +250,6 @@ bool StateMachine::isRoverReady() const
 {
     return mStateChanged || // internal data has changed
            mRover->updateRover( mNewRoverStatus ) || // external data has changed
-           mRover->roverStatus().currentState() == NavState::TurnedToTargetWait || // continue even if no data has changed
            mRover->roverStatus().currentState() == NavState::GateSpinWait;
 
 } // isRoverReady()
@@ -365,9 +335,9 @@ NavState StateMachine::executeDrive()
     DriveStatus driveStatus = mRover->drive( nextWaypoint.odom );
     if( driveStatus == DriveStatus::Arrived )
     {
-        if( nextWaypoint.search )
+        if( nextWaypoint.search || nextWaypoint.gate )
         {
-            return NavState::SearchTurn;
+            return NavState::ChangeSearchAlg;
         }
         mRover->roverStatus().path().pop_front();
        
@@ -397,7 +367,6 @@ string StateMachine::stringifyNavState() const
             { NavState::SearchTurn, "Search Turn" },
             { NavState::SearchDrive, "Search Drive" },
             { NavState::TurnToTarget, "Turn to Target" },
-            { NavState::TurnedToTargetWait, "Turned to Target Wait" },
             { NavState::DriveToTarget, "Drive to Target" },
             { NavState::TurnAroundObs, "Turn Around Obstacle"},
             { NavState::DriveAroundObs, "Drive Around Obstacle" },
