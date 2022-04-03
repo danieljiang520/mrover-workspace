@@ -83,42 +83,6 @@ NavState GateStateMachine::run()
             return executeGateDriveThrough();
         }
 
-        case NavState::GateTurnToPerpPoint:
-        {
-            
-            return executeGateTurnToPerpPoint();
-        }
-
-        case NavState::GateDriveToPerpPoint:
-        {
-
-            return executeGateDriveToPerpPoint();
-        }
-
-        case NavState::GateTurnToDivePoint:
-        {
-
-            return executeGateTurnToDivePoint();
-        }
-
-        case NavState::GateDriveToDivePoint:
-        {
-
-            return executeGateDriveToDivePoint();
-        }
-
-        case NavState::GateTurnToAcrossPoint:
-        {
-
-            return executeGateTurnToAcrossPoint;
-        }
-
-        case NavState::GateDriveToAcrossPoint:
-        {
-
-            return executeGateDriveToAcrossPoint;
-        }    
-
 
 
         default:

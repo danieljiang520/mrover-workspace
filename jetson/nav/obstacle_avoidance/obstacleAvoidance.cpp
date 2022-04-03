@@ -1,7 +1,11 @@
+#ifndef KINEMATICS_UTILS
+#define KINEMATICS_UTILS
+
 #include "obstacleAvoidance.hpp"
 #include "utilities.hpp"
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
+using namespace Eigen;
 //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
 BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
     //TODO implement
