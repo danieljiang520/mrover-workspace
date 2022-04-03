@@ -56,7 +56,7 @@ enum class NavState
     GateTurnToFarPost = 48,
     GateDriveToFarPost = 49,
     GateTurnToGateCenter = 50,
-
+    
     // Unknown State
     Unknown = 255
 

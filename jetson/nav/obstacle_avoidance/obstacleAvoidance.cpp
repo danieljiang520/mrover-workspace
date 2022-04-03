@@ -22,6 +22,11 @@ double ObstacleAvoidance::getIdealDesiredBearing(Odometry roverOdom, Odometry de
 
 //returns an adjusted target bearing based on latency specifications (thresholding on maximum allowable change in bearing)
 double ObstacleAvoidance::getLatencyAdjustedDesiredBearing(Odometry roverOdom, double desiredBearing){
-    //TODO: implement
-    return -1.0;
+    // find latency 
+    double threshold = mRoverConfig[ "latencyThreshold" ][ "threshold" ].GetDouble();
+    if(desiredBearing > threshold){
+        return desiredBearing+threshold;
+    }
+    return desiredBearing;
+    
 }
