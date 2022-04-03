@@ -1,4 +1,5 @@
 #include "obstacleAvoidance.hpp"
+#include "utilities.hpp"
 
 //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
 BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
@@ -17,7 +18,20 @@ std::vector<double> ObstacleAvoidance::getClearBearings(std::vector<Obstacle>& o
 //not latency adjusted
 double ObstacleAvoidance::getIdealDesiredBearing(Odometry roverOdom, Odometry dest, std::vector<double> clearBearings){
     //TODO: implement
-    return -1.0;
+    
+    // First get the ideal bearing
+    double idealBearing = calcBearing(roverOdom, dest);
+
+    // Now we must find the closest clear bearings
+    double closestBearing = 900;
+    for (const double & bearing : clearBearings) {
+        if (abs(bearing - idealBearing) < abs(closestBearing - idealBearing)) {
+            // New closest
+            closestBearing = bearing;
+        }
+    }
+
+    return closestBearing;
 }
 
 //returns an adjusted target bearing based on latency specifications (thresholding on maximum allowable change in bearing)

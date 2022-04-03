@@ -6,7 +6,6 @@
 #include "rover.hpp"
 #include "search/searchStateMachine.hpp"
 #include "gate_search/gateStateMachine.hpp"
-#include "obstacle_avoidance/simpleAvoidance.hpp"
 
 using namespace std;
 using namespace rover_msgs;
