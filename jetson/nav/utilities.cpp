@@ -165,3 +165,111 @@ bool isObstacleInThreshold( Rover* rover, const rapidjson::Document& roverConfig
 {
     return rover->roverStatus().obstacle().distance <= roverConfig[ "navThresholds" ][ "obstacleDistanceThreshold" ].GetDouble();
 } // isObstacleInThreshold()
+
+
+Point Point::Map(const Point& input, const Point& a_in, const Point& b_in, const Point &a_out, const Point &b_out) {
+    // Convert input from one 2d space to another.
+    // This requires some linear algebra, so buckle up for some MATH 214 shenanigans.
+    double scale_in = a_in.distance(b_in);
+    double scale_out = a_out.distance(b_out);
+
+    // Translate the first point to the origin
+    Point bEffect = b_in - a_in;
+    Point cEffect = input - a_in;
+    
+    Point bEffect_out = b_out - a_out;
+
+    // Rotate b to be at the same angle as its output
+    double desiredAngle = atan2(bEffect_out.getY(), bEffect_out.getX());
+    double currentAngle = atan2(bEffect.getY(), bEffect.getX());
+    
+    double rotateAmount = desiredAngle - currentAngle;
+
+    // Rotate both points around the origin.
+    bEffect = Point((bEffect.getX() * cos(rotateAmount)) - (bEffect.getY() * sin(rotateAmount)),
+                    (bEffect.getX() * sin(rotateAmount)) + (bEffect.getY() * cos(rotateAmount)));
+
+    cEffect = Point((cEffect.getX() * cos(rotateAmount)) - (cEffect.getY() * sin(rotateAmount)),
+                    (cEffect.getX() * sin(rotateAmount)) + (cEffect.getY() * cos(rotateAmount)));
+
+    // Scale them properly.
+    bEffect = bEffect * (scale_out / scale_in);
+    cEffect = cEffect * (scale_out / scale_in);
+
+    // Rotate back in place
+    bEffect = bEffect + a_out;
+    cEffect = cEffect + a_out;
+
+    return cEffect;
+}
+
+Quadrant Point::getQuadrantIn() const {
+    if (getX() > 0) {
+        if (getY() > 0) {
+            return Quadrant::TopRight;
+        }
+        else {
+            return Quadrant::BottomRight;
+        }
+    }
+    else {
+        if (getY() > 0) {
+            return Quadrant::TopLeft;
+        }
+        else {
+            return Quadrant::BottomLeft;
+        }
+    }
+}
+
+Point::Point(double x_in, double y_in) : x(x_in), y(y_in) { }
+
+Point::Point() : x(0), y(0) { }
+
+Point::Point(const Odometry &point) :
+    x(point.longitude_deg + point.longitude_min / 60.0),
+    y(point.latitude_deg + point.latitude_min / 60.0) { }
+
+double Point::operator*(const Point& p) const {
+    return x * p.x + y * p.y;
+}
+Point Point::operator+(const Point& p) const {
+    return Point(x + p.x, y + p.y);
+}
+Point Point::operator-(const Point& p) const {
+    return Point(x - p.x, y - p.y);
+}
+Point Point::operator*(double s) const {
+    return Point(x * s, y * s);
+}
+
+double Point::distance(const Point& other) const {
+    return sqrt((other.x - x) * (other.x - x) + (other.y - y) * (other.y - y));
+}
+
+
+Odometry Point::toOdometry() const {
+    int long_deg = (int)getX();
+    double long_min = (x - long_deg) * 60.0;
+    int lat_deg = (int)getY();
+    double lat_min = (y - lat_deg) * 60.0;
+    Odometry odomToReturn = {lat_deg, lat_min, long_deg, long_min, 0, 0};
+    return odomToReturn;
+}
+
+void Point::setX(int x_in) {
+    x = x_in;
+}
+void Point::setY(int y_in) {
+    y= y_in;
+}
+double Point::getX() const {
+    return x;
+}
+
+double Point::getY() const {
+    return y;
+}
+
+
+

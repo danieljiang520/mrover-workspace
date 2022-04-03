@@ -5,6 +5,7 @@
 
 #include "../rover.hpp"
 #include "rover_msgs/Odometry.hpp"
+#include "utilities.hpp"
 // #include "../gate_search/gateStateMachine.hpp"
 
 class StateMachine;
@@ -57,13 +58,43 @@ private:
 
     NavState executeGateDriveToFarPost();
 
-    NavState executeGateTurnToGateCenter();;
+    NavState executeGateTurnToGateCenter();
+    
+    NavState executeGateShimmy();
 
     NavState executeGateDriveThrough();
+
+    NavState executeGateTurnToPerpPoint();
+
+    NavState executeGateDriveToPerpPoint();
+
+    NavState executeGateTurnToDivePoint();
+
+    NavState executeGateDriveToDivePoint();
+
+    NavState executeGateTurnToAcrossPoint();
+
+    NavState executeGateDriveToAcrossPoint();
+
+
+    
 
     void updatePost2Info();
 
     void calcCenterPoint();
+    
+    Odometry createCenterPoint();
+
+    Point makePerpPoint();
+
+    Point determineRoverPoint();
+
+    Point makeDivePoint();
+
+    Point makeAcrossPoint();
+
+    // Helper function to find the distance between the posts
+    double distanceBetweenPosts();
 
     /*************************************************************************/
     /* Private Member Variables */
@@ -74,7 +105,7 @@ private:
     // Reference to config variables
     const rapidjson::Document& mRoverConfig;
 
-    // Points in frnot of center of gate
+    // Points in front of center of gate
     Odometry centerPoint1;
     Odometry centerPoint2;
 
