@@ -80,43 +80,6 @@ NavState SearchStateMachine::executeSearchTurn()
     return NavState::SearchTurn;
 } // executeSearchTurn()
 
-// Executes the logic for driving while searching.
-// If the rover detects the target, it proceeds to the target.
-// If the rover detects an obstacle and is within the obstacle 
-// distance threshold, it proceeds to obstacle avoidance.
-// If the rover finishes driving, it proceeds to turning to the next Waypoint.
-// If the rover is still on course, it keeps driving to the next Waypoint.
-// Else the rover turns to the next Waypoint or turns back to the current Waypoint
-NavState SearchStateMachine::executeSearchDrive()
-{
-    if( mRover->roverStatus().leftCacheTarget().distance >= 0 && mRover->roverStatus().path().front().id ==
-            mRover->roverStatus().leftCacheTarget().id )
-    {
-        updateTargetDetectionElements( mRover->roverStatus().leftCacheTarget().bearing,
-                                           mRover->roverStatus().odometry().bearing_deg );
-        return NavState::TurnToTarget;
-    }
-
-    if( isObstacleDetected( mRover )  && isObstacleInThreshold( mRover, mRoverConfig ) )
-    {
-        roverStateMachine->updateObstacleAngle( mRover->roverStatus().obstacle().bearing, mRover->roverStatus().obstacle().rightBearing );
-        roverStateMachine->updateObstacleDistance( mRover->roverStatus().obstacle().distance );
-        return NavState::SearchTurnAroundObs;
-    }
-    const Odometry& nextSearchPoint = mSearchPoints.front();
-    DriveStatus driveStatus = mRover->drive( nextSearchPoint );
-
-    if( driveStatus == DriveStatus::Arrived )
-    {
-        mSearchPoints.pop_front();
-        return NavState::SearchTurn;
-    }
-    if( driveStatus == DriveStatus::OnCourse )
-    {
-        return NavState::SearchDrive;
-    }
-    return NavState::SearchTurn;
-} // executeSearchDrive()
 
 // Executes the logic for turning to the target.
 // If the rover loses the target, will continue to turn using last known angles.
@@ -155,15 +118,6 @@ NavState SearchStateMachine::executeDriveToTarget()
     {
         cerr << "Lost the target\n";
         return NavState::SearchTurn;
-    }
-
-    // Obstacle Detected
-    if( isObstacleDetected( mRover ) &&
-        !isTargetReachable( mRover, mRoverConfig )  && isObstacleInThreshold( mRover, mRoverConfig ) )
-    {
-        roverStateMachine->updateObstacleAngle( mRover->roverStatus().obstacle().bearing, mRover->roverStatus().obstacle().rightBearing );
-        roverStateMachine->updateObstacleDistance( mRover->roverStatus().obstacle().distance );
-        return NavState::SearchTurnAroundObs;
     }
 
     DriveStatus driveStatus;

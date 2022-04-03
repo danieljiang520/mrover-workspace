@@ -15,7 +15,6 @@ Rover::RoverStatus::RoverStatus()
     // which means distance = -1, bearing = 0, id = 0
     mCTargetLeft = {-1.0, 0, 0};
     mCTargetRight = {-1.0, 0, 0};
-    mObstacle = {0, 0, -1.0}; // empty obstacle --> distance is  -1
     mTargetLeft = {-1.0, 0, 0};
     mTargetRight = {-1.0, 0, 0};
 } // RoverStatus()
@@ -43,12 +42,6 @@ deque<Waypoint>& Rover::RoverStatus::path()
 {
     return mPath;
 } // path()
-
-// Gets a reference to the rover's current obstacle information.
-Obstacle& Rover::RoverStatus::obstacle()
-{
-    return mObstacle;
-} // obstacle()
 
 // Gets a reference to the rover's current odometry information.
 Odometry& Rover::RoverStatus::odometry()
@@ -122,7 +115,6 @@ Rover::RoverStatus& Rover::RoverStatus::operator=( Rover::RoverStatus& newRoverS
             ++mPathTargets;
         }
     }
-    mObstacle = newRoverStatus.obstacle();
     mOdometry = newRoverStatus.odometry();
     mTargetLeft = newRoverStatus.leftTarget();
     mTargetRight = newRoverStatus.rightTarget();
@@ -216,24 +208,16 @@ bool Rover::turn( double bearing )
     bearing = mod( bearing, 360 );
     throughZero( bearing, mRoverStatus.odometry().bearing_deg );
     double turningBearingThreshold;
-    if( isTurningAroundObstacle( mRoverStatus.currentState() ) )
-    {
-        turningBearingThreshold = 0;
-    }
-    else
-    {
+   
+
         turningBearingThreshold = mRoverConfig[ "navThresholds" ][ "turningBearing" ].GetDouble();
-    }
+
     if( fabs( bearing - mRoverStatus.odometry().bearing_deg ) <= turningBearingThreshold )
     {
         return true;
     }
     double turningEffort = mBearingPid.update( mRoverStatus.odometry().bearing_deg, bearing );
-    double minTurningEffort = mRoverConfig[ "navThresholds" ][ "minTurningEffort" ].GetDouble() * ( turningEffort < 0 ? -1 : 1 );
-    if( isTurningAroundObstacle( mRoverStatus.currentState() ) && fabs( turningEffort ) < minTurningEffort )
-    {
-        turningEffort = minTurningEffort;
-    }
+    // double minTurningEffort = mRoverConfig[ "navThresholds" ][ "minTurningEffort" ].GetDouble() * ( turningEffort < 0 ? -1 : 1 );
     publishJoystick( 0, turningEffort, false );
     return false;
 } // turn()
@@ -262,12 +246,10 @@ bool Rover::updateRover( RoverStatus newRoverStatus )
         }
 
         // If any data has changed, update all data
-        if( !isEqual( mRoverStatus.obstacle(), newRoverStatus.obstacle() ) ||
-            !isEqual( mRoverStatus.odometry(), newRoverStatus.odometry() ) ||
+        if( !isEqual( mRoverStatus.odometry(), newRoverStatus.odometry() ) ||
             !isEqual( mRoverStatus.leftTarget(), newRoverStatus.leftTarget()) ||
             !isEqual( mRoverStatus.rightTarget(), newRoverStatus.rightTarget()) )
         {
-            mRoverStatus.obstacle() = newRoverStatus.obstacle();
             mRoverStatus.odometry() = newRoverStatus.odometry();
             mRoverStatus.leftTarget() = newRoverStatus.leftTarget();
             mRoverStatus.rightTarget() = newRoverStatus.rightTarget();
@@ -388,15 +370,7 @@ void Rover::publishJoystick( const double forwardBack, const double leftRight, c
 
 // Returns true if the two obstacle messages are equal, false
 // otherwise.
-bool Rover::isEqual( const Obstacle& obstacle1, const Obstacle& obstacle2 ) const
-{
-    if( obstacle1.distance == obstacle2.distance &&
-        obstacle1.bearing == obstacle2.bearing )
-    {
-        return true;
-    }
-    return false;
-} // isEqual( Obstacle )
+
 
 // Returns true if the two odometry messages are equal, false
 // otherwise.
@@ -424,18 +398,6 @@ bool Rover::isEqual( const Target& target, const Target& target2 ) const
     }
     return false;
 } // isEqual( Target )
-
-// Return true if the current state is TurnAroundObs or SearchTurnAroundObs,
-// false otherwise.
-bool Rover::isTurningAroundObstacle( const NavState currentState ) const
-{
-    if( currentState == NavState::TurnAroundObs ||
-        currentState == NavState::SearchTurnAroundObs )
-    {
-        return true;
-    }
-    return false;
-} // isTurningAroundObstacle()
 
 /*************************************************************************/
 /* TODOS */

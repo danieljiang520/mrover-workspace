@@ -7,7 +7,6 @@
 #include "rover_msgs/AutonState.hpp"
 #include "rover_msgs/Bearing.hpp"
 #include "rover_msgs/Course.hpp"
-#include "rover_msgs/Obstacle.hpp"
 #include "rover_msgs/Odometry.hpp"
 #include "rover_msgs/TargetList.hpp"
 #include "rover_msgs/Waypoint.hpp"
@@ -37,12 +36,6 @@ enum class NavState
     // Target Found States
     TurnToTarget = 27,
     DriveToTarget = 28,
-
-    // Obstacle Avoidance States
-    TurnAroundObs = 30,
-    DriveAroundObs = 31,
-    SearchTurnAroundObs = 32,
-    SearchDriveAroundObs = 33,
 
     // Gate Search States
     GateSpin = 40,
@@ -86,7 +79,6 @@ public:
             AutonState autonStateIn,
             Bearing bearingIn,
             Course courseIn,
-            Obstacle obstacleIn,
             Odometry odometryIn,
             Target targetIn,
             Target target2In
@@ -99,8 +91,6 @@ public:
         Course& course();
 
         deque<Waypoint>& path();
-
-        Obstacle& obstacle();
 
         Odometry& odometry();
 
@@ -138,10 +128,6 @@ public:
         // the rover's course, however, as waypoints are visited, the
         // are removed from the path but not the course.
         deque<Waypoint> mPath;
-
-        // The rover's current obstacle information from computer
-        // vision.
-        Obstacle mObstacle;
 
         // The rover's current odometry information.
         Odometry mOdometry;
@@ -200,13 +186,9 @@ private:
     /*************************************************************************/
     void publishJoystick( const double forwardBack, const double leftRight, const bool kill );
 
-    bool isEqual( const Obstacle& obstacle1, const Obstacle& obstacle2 ) const;
-
     bool isEqual( const Odometry& odometry1, const Odometry& odometry2 ) const;
 
     bool isEqual( const Target& target, const Target& target2 ) const;
-
-    bool isTurningAroundObstacle( const NavState currentState ) const;
 
     /*************************************************************************/
     /* Private Member Variables */

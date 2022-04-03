@@ -6,6 +6,7 @@
 #include "rover.hpp"
 #include "search/searchStateMachine.hpp"
 #include "gate_search/gateStateMachine.hpp"
+#include "rover_msgs/Obstacle.hpp"
 
 using namespace std;
 using namespace rover_msgs;
@@ -36,12 +37,6 @@ public:
 
     void updateRoverStatus( TargetList targetList );
     void updateCompletedPoints( );
-
-    void updateObstacleAngle( double bearing, double rightBearing );
-
-    void updateObstacleDistance( double distance );
-
-    void updateObstacleElements( double bearing, double rightBearing, double distance );
 
     void setSearcher(SearchType type, Rover* rover, const rapidjson::Document& roverConfig );
 
@@ -107,9 +102,6 @@ private:
 
     // Search pointer to control search states
     SearchStateMachine* mSearchStateMachine;
-
-    // Avoidance pointer to control obstacle avoidance states
-    ObstacleAvoidanceStateMachine* mObstacleAvoidanceStateMachine;
 
 }; // StateMachine
 
