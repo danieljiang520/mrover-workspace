@@ -3,8 +3,10 @@
 #include "rover_msgs/Odometry.hpp"
 #include "rover.hpp"
 #include <eigen3/Eigen/Dense>
+#include <cmath>
 
 using namespace Eigen;
+
 
 class ObstacleAvoidance{
     public:

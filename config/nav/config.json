@@ -36,7 +36,8 @@
 		"obstacleDistanceThreshold": 2.5,
 		"cacheMissMax": 20,
 		"noTargetDist": -1,
-		"maximumPostWidth": 3.0
+		"maximumPostWidth": 3.0,
+		"clearBearingComparisonThreshold": 0.000001
 	},
 
 	"roverMeasurements":
@@ -82,5 +83,6 @@
 		"threshold": 5.0,
 		
 	}
+
 }
 

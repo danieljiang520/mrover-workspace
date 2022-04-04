@@ -5,9 +5,65 @@ ObstacleAvoidance::ObstacleAvoidance(const rapidjson::Document& roverConfig )
     : mRoverConfig(roverConfig) {}
 
 //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
+<<<<<<< Updated upstream
 ObstacleAvoidance::BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
     //TODO implement
     return {NavState::Drive, -1.0};
+=======
+BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
+    //Get the vector of clear bearings and see if it is empty
+    std::vector<double> clearBearings = getClearBearings(obstacles);
+    if(clearBearings.size() == 0) {
+        return {NavState::Turn, mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble() + 1.0};
+    }
+
+    //Search for 0.0 in clear bearings
+    bool zeroPointZeroClear = false;
+    for(double bearing : clearBearings) {
+        if(fabs(bearing - 0.0) < 
+                mRoverConfig[ "navThresholds" ][ "clearBearingComparisonThreshold" ].GetDouble()) {
+            zeroPointZeroClear = true;
+        }
+    }   
+
+    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+
+    //If there is an obstacle directly in front of the Rover calculate the distance to it
+    if(!zeroPointZeroClear) {
+        Obstacle obsInFront;
+        BearingLines bearings(0.0);
+        for (Obstacle& obstacle : obstacles) {
+            if(isObstacleInBearing(obstacle, bearings)){
+                obsInFront = obstacle;
+            }
+        }
+
+        double distanceToObstacle;
+
+        if(obstacle.bottom_left_coordinate_meters[2] < obstacle.top_right_coordinate_meters[2]) {
+            distanceToObstacle = obstacle.bottom_left_coordinate_meters[2];
+        }
+        else {
+            distanceToObstacle = obstacle.top_right_coordinate_meters[2];  
+        }
+
+        double threshold = mRoverConfig[ "navThresholds" ][ "obstacleDistanceThreshold" ].GetDouble();
+
+        //If there is enough room in front of the Rover, drive to the adjusted ideal bearing
+        if(distanceToObstacle > threshold) {
+            return {NavState::Drive, adjustedIdealBearing};
+        }
+        
+        //If there is not enough room in front of the Rover, turn to the adjusted ideal bearing
+        else if(distanceToObstacle < threshold) {
+            return {NavState::Turn, adjustedIdealBearing};
+        }
+    }
+
+    //If there are no obstacles in front of the rover, continue driving on current trajectory
+    return {NavState::Drive, 0.0};  
+>>>>>>> Stashed changes
 }
 
 bool ObstacleAvoidance::isObstacleInBearing(Obstacle& obstacle, BearingLines& bearings) {
