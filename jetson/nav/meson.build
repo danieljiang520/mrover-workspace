@@ -1,13 +1,7 @@
 project('nav', 'cpp', default_options : ['cpp_std=c++14'])
 
 liblcm = dependency('lcm')
-eigen_dirs = include_directories('/usr/local/include/eigen3')
-eigen_deps = declare_dependency(
-    include_directories : eigen_dirs,
-    link_args : []
-)
-
-all_deps = [liblcm, eigen_deps]
+all_deps = [liblcm]
 
 src = ['main.cpp', 'stateMachine.cpp', 'rover.cpp', 'pid.cpp', 'utilities.cpp',
 			'search/spiralInSearch.cpp', 'search/lawnMowerSearch.cpp', 'search/searchStateMachine.cpp', 'search/spiralOutSearch.cpp',
