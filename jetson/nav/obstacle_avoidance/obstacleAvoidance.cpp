@@ -5,7 +5,7 @@ ObstacleAvoidance::ObstacleAvoidance(const rapidjson::Document& roverConfig )
     : mRoverConfig(roverConfig) {}
 
 //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
-BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
+ObstacleAvoidance::BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
     //Get the vector of clear bearings and see if it is empty
     std::vector<double> clearBearings = getClearBearings(obstacles);
     if(clearBearings.size() == 0) {
@@ -27,7 +27,7 @@ BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacl
     //If there is an obstacle directly in front of the Rover calculate the distance to it
     if(!zeroPointZeroClear) {
         Obstacle obsInFront;
-        BearingLines bearings(0.0);
+        BearingLines bearings(0.0, mRoverConfig[ "roverMeasurements" ][ "width" ].GetDouble());
         for (Obstacle& obstacle : obstacles) {
             if(isObstacleInBearing(obstacle, bearings)){
                 obsInFront = obstacle;
@@ -36,11 +36,11 @@ BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacl
 
         double distanceToObstacle;
 
-        if(obstacle.bottom_left_coordinate_meters[2] < obstacle.top_right_coordinate_meters[2]) {
-            distanceToObstacle = obstacle.bottom_left_coordinate_meters[2];
+        if(obsInFront.bottom_left_coordinate_meters[2] < obsInFront.top_right_coordinate_meters[2]) {
+            distanceToObstacle = obsInFront.bottom_left_coordinate_meters[2];
         }
         else {
-            distanceToObstacle = obstacle.top_right_coordinate_meters[2];  
+            distanceToObstacle = obsInFront.top_right_coordinate_meters[2];  
         }
 
         double threshold = mRoverConfig[ "navThresholds" ][ "obstacleDistanceThreshold" ].GetDouble();
