@@ -5,11 +5,6 @@ ObstacleAvoidance::ObstacleAvoidance(const rapidjson::Document& roverConfig )
     : mRoverConfig(roverConfig) {}
 
 //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
-<<<<<<< Updated upstream
-ObstacleAvoidance::BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
-    //TODO implement
-    return {NavState::Drive, -1.0};
-=======
 BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
     //Get the vector of clear bearings and see if it is empty
     std::vector<double> clearBearings = getClearBearings(obstacles);
@@ -63,7 +58,6 @@ BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacl
 
     //If there are no obstacles in front of the rover, continue driving on current trajectory
     return {NavState::Drive, 0.0};  
->>>>>>> Stashed changes
 }
 
 bool ObstacleAvoidance::isObstacleInBearing(Obstacle& obstacle, BearingLines& bearings) {
