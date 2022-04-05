@@ -36,6 +36,23 @@ class ObstacleAvoidance{
 
         //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
         BearingDecision getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest);
+
+        //TO BE REMOVED WHEN UNIT TESTING IS COMPLETE
+        std::vector<double> test_getClearBearings(std::vector<Obstacle>& obstacles) {
+            return getClearBearings(obstacles);
+        }
+
+        double test_getIdealDesiredBearing(Odometry roverOdom, Odometry dest, std::vector<double> clearBearings) {
+            return getIdealDesiredBearing(roverOdom, dest, clearBearings);
+        }
+
+        double test_getLatencyAdjustedDesiredBearing(Odometry roverOdom, double desiredBearing) {
+            return getLatencyAdjustedDesiredBearing(roverOdom, desiredBearing);
+        }
+
+        bool test_isObstacleInBearing(Obstacle& obstacle, BearingLines& bearings) {
+            return isObstacleInBearing(obstacle, bearings);
+        }
     
     private:
         //returns a vector of doubles representing clear bearings through a list of obstacles

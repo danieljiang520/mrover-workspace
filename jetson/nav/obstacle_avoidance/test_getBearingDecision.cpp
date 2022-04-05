@@ -128,9 +128,9 @@ void test_zero_zero_not_clear_in_threshold() {
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
     Obstacle obs = {{-2, -2, 1}, {2, 2, 1}};
     v.push_back(obs);
-
-    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    vector<double> clearBearings = oa.test_getClearBearings(v);
+    double idealBearingUnadjusted = oa.test_getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.test_getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
     ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest );
     ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
@@ -159,9 +159,9 @@ void test_zero_zero_not_clear_not_in_threshold() {
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
     Obstacle obs = {{-2, -2, 30}, {2, 2, 30}};
     v.push_back(obs);
-
-    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    vector<double> clearBearings = oa.test_getClearBearings(v);
+    double idealBearingUnadjusted = oa.test_getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.test_getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
     ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
     ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
@@ -196,9 +196,9 @@ void test_zero_zero_is_clear_many_obs() {
     v.push_back(obs2);
     v.push_back(obs3);
     v.push_back(obs4);
-
-    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    vector<double> clearBearings = oa.test_getClearBearings(v);
+    double idealBearingUnadjusted = oa.test_getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.test_getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
     ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
     ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
@@ -233,9 +233,9 @@ void test_zero_zero_not_clear_many_obs_in_threshold() {
     v.push_back(obs2);
     v.push_back(obs3);
     v.push_back(obs4);
-
-    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    vector<double> clearBearings = oa.test_getClearBearings(v);
+    double idealBearingUnadjusted = oa.test_getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.test_getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
     ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
     ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
@@ -270,11 +270,11 @@ void test_zero_zero_not_clear_many_obs_not_in_threshold() {
     v.push_back(obs2);
     v.push_back(obs3);
     v.push_back(obs4);
-
-    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    vector<double> clearBearings = oa.test_getClearBearings(v);
+    double idealBearingUnadjusted = oa.test_getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.test_getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
     ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
-    ObstacleAvoidance::BearingDecisioncompare = {NavState::Drive, adjustedIdealBearing};
+    ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);
