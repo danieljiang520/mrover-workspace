@@ -1,5 +1,7 @@
 #include "rover_msgs/Obstacle.hpp"
 #include "rover_msgs/Odometry.hpp"
+#include "obstacleAvoidance.hpp"
+#include "rapidjson/document.h"
 #include "rover.hpp"
 #include <vector>
 #include <iostream>
@@ -11,6 +13,7 @@ using namespace std;
 void run_tests();
 void test_empty_clear_bearing_list();
 void test_zero_zero_is_clear();
+void test_zero_zero_is_clear_many_obs();
 void test_zero_zero_not_clear_in_threshold();
 void test_zero_zero_not_clear_not_in_threshold();
 void test_zero_zero_not_clear_many_obs();
@@ -24,7 +27,7 @@ int main() {
 }
 
 void run_tests() {
-    cout << "Running getBearingDecision Tests"
+    cout << "Running getBearingDecision Tests";
     cout << "=====================================\n";
 
     test_empty_clear_bearing_list();
@@ -54,40 +57,82 @@ void run_tests() {
 }
 
 void test_empty_clear_bearing_list() {
+    rapidjson::Document mRoverConfig;
+    ifstream configFile;
+    string configPath = getenv("MROVER_CONFIG");
+    configPath += "/config_nav/config.json";
+    configFile.open( configPath );
+    string config = "";
+    string setting;
+    while( configFile >> setting )
+    {
+        config += setting;
+    }
+    configFile.close();
+    mRoverConfig.Parse( config.c_str() );
+    ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
-    BearingDecision output = getDesiredBearingDecision(v, roverOdom, dest );
-    BearingDecision compare = {NavState::Turn, 111};
+    ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest );
+    ObstacleAvoidance::BearingDecision compare = {NavState::Turn, 111};
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);
     return;
 }
 
 void test_zero_zero_is_clear() {
+    rapidjson::Document mRoverConfig;
+    ifstream configFile;
+    string configPath = getenv("MROVER_CONFIG");
+    configPath += "/config_nav/config.json";
+    configFile.open( configPath );
+    string config = "";
+    string setting;
+    while( configFile >> setting )
+    {
+        config += setting;
+    }
+    configFile.close();
+    mRoverConfig.Parse( config.c_str() );
+    ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
     Obstacle obs = {{-1, -1, 3}, {-1, -1, 3}};
     v.push_back(obs);
-    BearingDecision output = getDesiredBearingDecision(v, roverOdom, dest );
-    BearingDecision compare = {NavState::Drive, 0.0};
+    ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest );
+    ObstacleAvoidance::BearingDecision compare = {NavState::Drive, 0.0};
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);
     return;
 }
 
 void test_zero_zero_not_clear_in_threshold() {
+    rapidjson::Document mRoverConfig;
+    ifstream configFile;
+    string configPath = getenv("MROVER_CONFIG");
+    configPath += "/config_nav/config.json";
+    configFile.open( configPath );
+    string config = "";
+    string setting;
+    while( configFile >> setting )
+    {
+        config += setting;
+    }
+    configFile.close();
+    mRoverConfig.Parse( config.c_str() );
+    ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
     Obstacle obs = {{-2, -2, 1}, {2, 2, 1}};
     v.push_back(obs);
 
-    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
-    BearingDecision output = getDesiredBearingDecision(v, roverOdom, dest );
-    BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
+    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest );
+    ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);
@@ -95,16 +140,30 @@ void test_zero_zero_not_clear_in_threshold() {
 }
 
 void test_zero_zero_not_clear_not_in_threshold() {
+    rapidjson::Document mRoverConfig;
+    ifstream configFile;
+    string configPath = getenv("MROVER_CONFIG");
+    configPath += "/config_nav/config.json";
+    configFile.open( configPath );
+    string config = "";
+    string setting;
+    while( configFile >> setting )
+    {
+        config += setting;
+    }
+    configFile.close();
+    mRoverConfig.Parse( config.c_str() );
+    ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
     Obstacle obs = {{-2, -2, 30}, {2, 2, 30}};
     v.push_back(obs);
 
-    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
-    BearingDecision output = getDesiredBearingDecision(v, roverOdom, dest);
-    BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
+    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
+    ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);
@@ -112,6 +171,20 @@ void test_zero_zero_not_clear_not_in_threshold() {
 }
 
 void test_zero_zero_is_clear_many_obs() {
+    rapidjson::Document mRoverConfig;
+    ifstream configFile;
+    string configPath = getenv("MROVER_CONFIG");
+    configPath += "/config_nav/config.json";
+    configFile.open( configPath );
+    string config = "";
+    string setting;
+    while( configFile >> setting )
+    {
+        config += setting;
+    }
+    configFile.close();
+    mRoverConfig.Parse( config.c_str() );
+    ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
@@ -124,10 +197,10 @@ void test_zero_zero_is_clear_many_obs() {
     v.push_back(obs3);
     v.push_back(obs4);
 
-    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
-    BearingDecision output = getDesiredBearingDecision(v, roverOdom, dest);
-    BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
+    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
+    ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);
@@ -135,6 +208,20 @@ void test_zero_zero_is_clear_many_obs() {
 }
 
 void test_zero_zero_not_clear_many_obs_in_threshold() {
+    rapidjson::Document mRoverConfig;
+    ifstream configFile;
+    string configPath = getenv("MROVER_CONFIG");
+    configPath += "/config_nav/config.json";
+    configFile.open( configPath );
+    string config = "";
+    string setting;
+    while( configFile >> setting )
+    {
+        config += setting;
+    }
+    configFile.close();
+    mRoverConfig.Parse( config.c_str() );
+    ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
@@ -147,10 +234,10 @@ void test_zero_zero_not_clear_many_obs_in_threshold() {
     v.push_back(obs3);
     v.push_back(obs4);
 
-    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
-    BearingDecision output = getDesiredBearingDecision(v, roverOdom, dest);
-    BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
+    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
+    ObstacleAvoidance::BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
 
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);
@@ -158,6 +245,20 @@ void test_zero_zero_not_clear_many_obs_in_threshold() {
 }
 
 void test_zero_zero_not_clear_many_obs_not_in_threshold() {
+    rapidjson::Document mRoverConfig;
+    ifstream configFile;
+    string configPath = getenv("MROVER_CONFIG");
+    configPath += "/config_nav/config.json";
+    configFile.open( configPath );
+    string config = "";
+    string setting;
+    while( configFile >> setting )
+    {
+        config += setting;
+    }
+    configFile.close();
+    mRoverConfig.Parse( config.c_str() );
+    ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
@@ -170,10 +271,10 @@ void test_zero_zero_not_clear_many_obs_not_in_threshold() {
     v.push_back(obs3);
     v.push_back(obs4);
 
-    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
-    BearingDecision output = getDesiredBearingDecision(v, roverOdom, dest);
-    BearingDecision compare = {NavState::Drive, adjustedIdealBearing};
+    double idealBearingUnadjusted = oa.getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = oa.getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+    ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest);
+    ObstacleAvoidance::BearingDecisioncompare = {NavState::Drive, adjustedIdealBearing};
 
     assert(output.obstacleControllerOutputState == compare.obstacleControllerOutputState);
     assert(output.desiredBearing == compare.desiredBearing);

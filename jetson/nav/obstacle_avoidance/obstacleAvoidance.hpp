@@ -4,6 +4,7 @@
 #include "rover.hpp"
 #include <eigen3/Eigen/Dense>
 #include <cmath>
+#include <fstream>
 
 using namespace Eigen;
 
