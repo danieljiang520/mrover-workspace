@@ -1,44 +1,36 @@
-#ifndef STATE_MACHINE_HPP
-#define STATE_MACHINE_HPP
+#pragma once
 
+#include <memory>
 #include <lcm/lcm-cpp.hpp>
-#include "rapidjson/document.h"
 #include "rover.hpp"
 #include "search/searchStateMachine.hpp"
 #include "gate_search/gateStateMachine.hpp"
-#include "rover_msgs/Obstacle.hpp"
+#include "environment.hpp"
+#include "courseProgress.hpp"
 
-using namespace std;
+
 using namespace rover_msgs;
 
 // This class implements the logic for the state machine for the
 // autonomous navigation of the rover.
-class StateMachine
-{
+class StateMachine : public std::enable_shared_from_this<StateMachine> {
 public:
     /*************************************************************************/
     /* Public Member Functions */
     /*************************************************************************/
-    StateMachine( lcm::LCM& lcmObject );
+    StateMachine(rapidjson::Document& config,
+                 std::shared_ptr<Rover> rover, std::shared_ptr<Environment> env, std::shared_ptr<CourseProgress> courseProgress,
+                 lcm::LCM& lcmObject);
 
-    ~StateMachine();
+    void run();
 
-    void run( );
+    void setSearcher(SearchType type, const std::shared_ptr<Rover>& rover, const rapidjson::Document& roverConfig);
 
-    void updateRoverStatus( AutonState autonState );
+    std::shared_ptr<Environment> getEnv();
 
-    void updateRoverStatus( Bearing bearing );
+    std::shared_ptr<CourseProgress> getCourseState();
 
-    void updateRoverStatus( Course course );
-
-    void updateRoverStatus( Obstacle obstacle );
-
-    void updateRoverStatus( Odometry odometry );
-
-    void updateRoverStatus( TargetList targetList );
-    void updateCompletedPoints( );
-
-    void setSearcher(SearchType type, Rover* rover, const rapidjson::Document& roverConfig );
+    std::shared_ptr<Rover> getRover();
 
     bool pushNewRoverStatus();
     
@@ -46,14 +38,12 @@ public:
     /* Public Member Variables */
     /*************************************************************************/
     // Gate State Machine instance
-    GateStateMachine* mGateStateMachine;
+    std::shared_ptr<GateStateMachine> mGateStateMachine;
 
 private:
     /*************************************************************************/
     /* Private Member Functions */
     /*************************************************************************/
-    bool isRoverReady() const;
-
     void publishNavState() const;
 
     NavState executeOff();
@@ -64,45 +54,27 @@ private:
 
     NavState executeDrive();
 
-    NavState executeSearch();
+    std::string stringifyNavState() const;
 
-    void initializeSearch();
-
-    bool addFourPointsToSearch();
-
-    string stringifyNavState() const;
-
-    double getOptimalAvoidanceDistance() const;
-
-    bool isWaypointReachable( double distance );
+    bool isWaypointReachable(double distance);
 
     /*************************************************************************/
     /* Private Member Variables */
     /*************************************************************************/
+    // Configuration file for the rover.
+    rapidjson::Document& mConfig;
+
     // Rover object to do basic rover operations in the state machine.
-    Rover* mRover;
+    std::shared_ptr<Rover> mRover;
 
-    // RoverStatus object for updating the rover's status.
-    Rover::RoverStatus mNewRoverStatus;
+    std::shared_ptr<Environment> mEnv;
 
-    // Lcm object for sending and recieving messages.
+    std::shared_ptr<CourseProgress> mCourseProgress;
+
+    // Lcm object for sending and receiving messages.
     lcm::LCM& mLcmObject;
 
-    // Configuration file for the rover.
-    rapidjson::Document mRoverConfig;
-
-    // Number of waypoints in course.
-    unsigned mTotalWaypoints;
-
-    // Number of waypoints completed.
-    unsigned mCompletedWaypoints; 
-
-    // Indicates if the state changed on a given iteration of run.
-    bool mStateChanged;
-
     // Search pointer to control search states
-    SearchStateMachine* mSearchStateMachine;
+    std::shared_ptr<SearchStateMachine> mSearchStateMachine;
 
 }; // StateMachine
-
-#endif // STATE_MACHINE_HPP

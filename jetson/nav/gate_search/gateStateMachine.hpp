@@ -2,21 +2,22 @@
 #define GATE_STATE_MACHINE_HPP
 
 #include <deque>
+#include <memory>
 
 #include "../rover.hpp"
 #include "rover_msgs/Odometry.hpp"
-#include "utilities.hpp"
-// #include "../gate_search/gateStateMachine.hpp"
+
+
+using namespace rover_msgs;
 
 class StateMachine;
 
-class GateStateMachine
-{
+class GateStateMachine {
 public:
     /*************************************************************************/
     /* Public Member Functions */
     /*************************************************************************/
-    GateStateMachine( StateMachine* stateMachine, Rover* rover, const rapidjson::Document& roverConfig );
+    GateStateMachine(std::weak_ptr<StateMachine> stateMachine, const rapidjson::Document& roverConfig);
 
     virtual ~GateStateMachine();
 
@@ -34,7 +35,15 @@ public:
     Waypoint lastKnownLeftPost;
 
     // Queue of search points
-    deque<Odometry> mGateSearchPoints;
+    std::deque<Odometry> mGateSearchPoints;
+
+protected:
+    /*************************************************************************/
+    /* Protected Member Variables */
+    /*************************************************************************/
+
+    // Pointer to rover State Machine to access member functions
+    std::weak_ptr<StateMachine> mStateMachine;
 
 private:
     /*************************************************************************/
@@ -85,22 +94,12 @@ private:
     
     Odometry createCenterPoint();
 
-    Point makePerpPoint();
-
-    Point determineRoverPoint();
-
-    Point makeDivePoint();
-
-    Point makeAcrossPoint();
-
     // Helper function to find the distance between the posts
     double distanceBetweenPosts();
 
     /*************************************************************************/
     /* Private Member Variables */
     /*************************************************************************/
-    // Pointer to rover State Machine to access member functions
-    StateMachine* mRoverStateMachine;
 
     // Reference to config variables
     const rapidjson::Document& mRoverConfig;
@@ -116,15 +115,9 @@ private:
     // of driving through a post when driving through the
     // wrong direction
     double gateAdjustmentDist;
-
-protected:
-    /*************************************************************************/
-    /* Protected Member Variables */
-    /*************************************************************************/
-    // Pointer to rover object
-    Rover* mRover;
 };
 
-GateStateMachine* GateFactory( StateMachine* stateMachine, Rover* rover, const rapidjson::Document& roverConfig );
+std::shared_ptr<GateStateMachine>
+GateFactory(std::weak_ptr<StateMachine> stateMachine, const rapidjson::Document& roverConfig);
 
 #endif //GATE_STATE_MACHINE_HPP

@@ -88,7 +88,7 @@ std::vector<double> ObstacleAvoidance::getClearBearings(std::vector<Obstacle>& o
     //TODO implement
     double left_fov_max = -mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble()/2.0;
     double right_fov_max = -mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble()/2.0;
-    vector<double> possible_bearings;
+    std::vector<double> possible_bearings;
     for (double heading = left_fov_max; heading < right_fov_max; heading++) {
         BearingLines bearings(heading * 3.1415926535 / 180.0, mRoverConfig[ "roverMeasurements" ][ "width" ].GetDouble()); //Create bearing using radians
         bool obstacle_in_heading = false;
