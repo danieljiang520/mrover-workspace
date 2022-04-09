@@ -8,9 +8,12 @@
 #include <string>
 #include <cassert>
 
+#include "test_suites.hpp"
+
 using namespace std;
 
-void run_tests();
+// void run_tests();
+void test_basic_clear_bearing(rapidjson::Document & mRoverConfig);
 void test_empty_clear_bearing_list();
 void test_zero_zero_is_clear();
 void test_zero_zero_is_clear_many_obs();
@@ -20,15 +23,20 @@ void test_zero_zero_not_clear_many_obs();
 void test_zero_zero_not_clear_many_obs_in_threshold();
 void test_zero_zero_not_clear_many_obs_not_in_threshold();
 
+void test_getIdealBearing(rapidjson::Document & mRoverConfig);
+void run_tests(rapidjson::Document & mRoverConfig);
 
-int main() {
-    run_tests();
-    return 0;
-}
+// int main() {
+//     run_tests();
+//     return 0;
+// }
 
-void run_tests() {
-    cout << "Running getBearingDecision Tests";
+void run_tests(rapidjson::Document & mRoverConfig) {
+    cout << "Running getBearingDecision Tests\n";
     cout << "=====================================\n";
+
+    test_basic_clear_bearing(mRoverConfig);
+    cout << "test_basic_clear_bearing PASS\n";
 
     test_empty_clear_bearing_list();
     cout << "test_empty_clear_bearing_list PASS\n";
@@ -54,6 +62,22 @@ void run_tests() {
     cout << "=====================================\n";
     cout << "ALL TESTS PASS\n";
     return;
+}
+
+void test_basic_clear_bearing(rapidjson::Document & mRoverConfig) {
+    ObstacleAvoidance oa(mRoverConfig);
+    vector<Obstacle> v;
+    Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
+    Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
+    Obstacle obs = {{1, 0, 1}, {2, 1, 2}};
+    // Obstacle obs = {{-2, 0, 3}, {2, 1, 4}};
+    v.push_back(obs);
+    vector<double> clearBearings = oa.test_getClearBearings(v);
+    cout << "Clear bearings (" << clearBearings.size() << ")\n";
+    for (double i : clearBearings) {
+        cout << i << ", ";
+    }
+    cout << "\n";
 }
 
 void test_empty_clear_bearing_list() {
@@ -99,7 +123,7 @@ void test_zero_zero_is_clear() {
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
-    Obstacle obs = {{-1, -1, 3}, {-1, -1, 3}};
+    Obstacle obs = {{-1, -1, 3}, {-1, -1, 4}};
     v.push_back(obs);
     ObstacleAvoidance::BearingDecision output = oa.getDesiredBearingDecision(v, roverOdom, dest );
     ObstacleAvoidance::BearingDecision compare = {NavState::Drive, 0.0};
@@ -126,7 +150,7 @@ void test_zero_zero_not_clear_in_threshold() {
     vector<Obstacle> v;
     Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
     Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
-    Obstacle obs = {{-2, -2, 1}, {2, 2, 1}};
+    Obstacle obs = {{-2, -2, 1}, {2, 2, 2}};
     v.push_back(obs);
     vector<double> clearBearings = oa.test_getClearBearings(v);
     double idealBearingUnadjusted = oa.test_getIdealDesiredBearing(roverOdom, dest, clearBearings);

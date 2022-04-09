@@ -1,5 +1,8 @@
 #include "obstacleAvoidance.hpp"
 #include "utilities.hpp"
+#include <iostream>
+
+using namespace std;
 
 ObstacleAvoidance::ObstacleAvoidance(const rapidjson::Document& roverConfig ) 
     : mRoverConfig(roverConfig) {}
@@ -15,6 +18,7 @@ ObstacleAvoidance::BearingDecision ObstacleAvoidance::getDesiredBearingDecision(
     //Search for 0.0 in clear bearings
     bool zeroPointZeroClear = false;
     for(double bearing : clearBearings) {
+
         if(fabs(bearing - 0.0) < 
                 mRoverConfig[ "navThresholds" ][ "clearBearingComparisonThreshold" ].GetDouble()) {
             zeroPointZeroClear = true;
@@ -67,17 +71,36 @@ bool ObstacleAvoidance::isObstacleInBearing(Obstacle& obstacle, BearingLines& be
     double LBL_topRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bLeft(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bLeft(1)));
     double RBL_topRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bRight(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bRight(1)));
 
-    if (
-        // Check if botLeft is in Rover path
-        ((LBL_botLeft > 0 && RBL_botLeft < 0) || (LBL_botLeft < 0 && RBL_botLeft > 0)
-        || LBL_botLeft == 0 || RBL_botLeft == 0) ||
-        // Check if topRight is in Rover path
-        ((LBL_topRight > 0 && RBL_topRight < 0) || (LBL_topRight < 0 && RBL_topRight > 0)
-        || LBL_topRight == 0 || RBL_topRight == 0) ||
-        // Check if obstacle spans Rover path
-        (LBL_botLeft < 0 && RBL_topRight > 0) || (RBL_botLeft > 0 && LBL_topRight < 0) 
-        ) {
-        return true;
+    double LBL_botRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bLeft(0))) + (bearings.n(1) * (obstacle.bottom_left_coordinate_meters[2] - bearings.bLeft(1)));
+    double RBL_botRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bRight(0))) + (bearings.n(1) * (obstacle.bottom_left_coordinate_meters[2] - bearings.bRight(1)));
+
+    double LBL_topLeft = (bearings.n(0) * (obstacle.bottom_left_coordinate_meters[0] - bearings.bLeft(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bLeft(1)));
+    double RBL_topLeft = (bearings.n(0) * (obstacle.bottom_left_coordinate_meters[0] - bearings.bRight(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bRight(1)));
+
+    // Check if obstacle its between bearing lines
+    if ((LBL_botLeft > 0 && RBL_botLeft < 0) || (LBL_botLeft < 0 && RBL_botLeft > 0)
+        || LBL_botLeft == 0 || RBL_botLeft == 0) {
+        return true; // This is not a clear path
+    }
+
+    if ((LBL_botRight > 0 && RBL_botRight < 0) || (LBL_botRight < 0 && RBL_botRight > 0)
+        || LBL_botRight == 0 || RBL_botRight == 0) {
+        return true; // This is not a clear path
+    }
+
+    if ((LBL_topLeft > 0 && RBL_topLeft < 0) || (LBL_topLeft < 0 && RBL_topLeft > 0)
+        || LBL_topLeft == 0 || RBL_topLeft == 0) {
+        return true; // This is not a clear path
+    }
+
+    if ((LBL_topRight > 0 && RBL_topRight < 0) || (LBL_topRight < 0 && RBL_topRight > 0)
+        || LBL_topRight == 0 || RBL_topRight == 0) {
+        return true; // This is not a clear path
+    }
+
+    // Check if obstacle is larger than span of bearing lines
+    if ((LBL_botLeft > 0 && RBL_botRight < 0) || (LBL_topLeft > 0 && RBL_topRight < 0)) {
+        return true; // This is not a clear path
     }
     return false;
 }
@@ -105,11 +128,9 @@ std::vector<double> ObstacleAvoidance::getClearBearings(std::vector<Obstacle>& o
 //returns a bearing that the rover should target to try to get to the destination while also getting around obstacles
 //not latency adjusted
 double ObstacleAvoidance::getIdealDesiredBearing(Odometry roverOdom, Odometry dest, std::vector<double> clearBearings){
-    //TODO: implement
-    
     // First get the ideal bearing
     double idealBearing = calcBearing(roverOdom, dest);
-
+    cout << "closest to ideal bearing " << idealBearing << "\n";
     // Now we must find the closest clear bearings
     double closestBearing = 900;
     for (const double & bearing : clearBearings) {
