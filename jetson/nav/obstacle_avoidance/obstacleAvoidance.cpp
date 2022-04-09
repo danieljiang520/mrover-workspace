@@ -71,17 +71,36 @@ bool ObstacleAvoidance::isObstacleInBearing(Obstacle& obstacle, BearingLines& be
     double LBL_topRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bLeft(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bLeft(1)));
     double RBL_topRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bRight(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bRight(1)));
 
-    if (
-        // Check if botLeft is in Rover path
-        ((LBL_botLeft > 0 && RBL_botLeft < 0) || (LBL_botLeft < 0 && RBL_botLeft > 0)
-        || LBL_botLeft == 0 || RBL_botLeft == 0) ||
-        // Check if topRight is in Rover path
-        ((LBL_topRight > 0 && RBL_topRight < 0) || (LBL_topRight < 0 && RBL_topRight > 0)
-        || LBL_topRight == 0 || RBL_topRight == 0) ||
-        // Check if obstacle spans Rover path
-        (LBL_botLeft < 0 && RBL_topRight > 0) || (RBL_botLeft > 0 && LBL_topRight < 0) 
-        ) {
-        return true;
+    double LBL_botRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bLeft(0))) + (bearings.n(1) * (obstacle.bottom_left_coordinate_meters[2] - bearings.bLeft(1)));
+    double RBL_botRight = (bearings.n(0) * (obstacle.top_right_coordinate_meters[0] - bearings.bRight(0))) + (bearings.n(1) * (obstacle.bottom_left_coordinate_meters[2] - bearings.bRight(1)));
+
+    double LBL_topLeft = (bearings.n(0) * (obstacle.bottom_left_coordinate_meters[0] - bearings.bLeft(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bLeft(1)));
+    double RBL_topLeft = (bearings.n(0) * (obstacle.bottom_left_coordinate_meters[0] - bearings.bRight(0))) + (bearings.n(1) * (obstacle.top_right_coordinate_meters[2] - bearings.bRight(1)));
+
+    // Check if obstacle its between bearing lines
+    if ((LBL_botLeft > 0 && RBL_botLeft < 0) || (LBL_botLeft < 0 && RBL_botLeft > 0)
+        || LBL_botLeft == 0 || RBL_botLeft == 0) {
+        return true; // This is not a clear path
+    }
+
+    if ((LBL_botRight > 0 && RBL_botRight < 0) || (LBL_botRight < 0 && RBL_botRight > 0)
+        || LBL_botRight == 0 || RBL_botRight == 0) {
+        return true; // This is not a clear path
+    }
+
+    if ((LBL_topLeft > 0 && RBL_topLeft < 0) || (LBL_topLeft < 0 && RBL_topLeft > 0)
+        || LBL_topLeft == 0 || RBL_topLeft == 0) {
+        return true; // This is not a clear path
+    }
+
+    if ((LBL_topRight > 0 && RBL_topRight < 0) || (LBL_topRight < 0 && RBL_topRight > 0)
+        || LBL_topRight == 0 || RBL_topRight == 0) {
+        return true; // This is not a clear path
+    }
+
+    // Check if obstacle is larger than span of bearing lines
+    if ((LBL_botLeft > 0 && RBL_botRight < 0) || (LBL_topLeft > 0 && RBL_topRight < 0)) {
+        return true; // This is not a clear path
     }
     return false;
 }
