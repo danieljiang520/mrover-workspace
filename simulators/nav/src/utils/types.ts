@@ -128,12 +128,20 @@ export interface Obstacle {
   size:number; /* meters */
 }
 
+/* Type representing the Obstacle LCM. This must be the same as the
+  Obstacle LCM. +x is to the right of camera, +y is down from camera,
+  +z is forward (out) from the camera */
+export interface ObstacleNewInterfaceMessage {
+  bottomLeftCoordinateMeters:number[];
+  topRightCorrdinateMeters:number[];
+}
 
 /* Interface representing the Obstacle LCM. This must be the same as the
    Obstacle LCM. */
 export interface ObstacleMessage {
   distance:number; /* meters from rover */
   bearing:number; /* degrees from rover */
+  size:number;    /* meters */
 }
 
 

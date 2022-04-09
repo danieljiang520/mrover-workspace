@@ -8,7 +8,9 @@ import {
   OdomFormat,
   Point2D,
   Speeds,
-  ZedGimbalPosition
+  ZedGimbalPosition,
+  ObstacleNewInterfaceMessage,
+  ObstacleMessage
 } from './types';
 
 /**************************************************************************************************
@@ -490,4 +492,26 @@ export function randnBm(min, max, skew):number {
     num += min;
   }
   return num;
+}
+
+export function obstacleDBToBoundingBox(obsOld:ObstacleMessage):ObstacleNewInterfaceMessage {
+  const xPlusSize = (obsOld.distance * Math.sin(obsOld.bearing)) + obsOld.size;
+  const xMinusSize = (obsOld.distance * Math.sin(obsOld.bearing)) - obsOld.size;
+  const yCommon = 0;
+  const zCommon = obsOld.distance * Math.cos(obsOld.bearing);
+  const bottomLeftCoordMeters = [
+    obsOld.bearing > 2 * Math.PI ? xMinusSize : xPlusSize,
+    yCommon,
+    zCommon
+  ];
+
+  const topRightCoordMeters = [
+    obsOld.bearing > 2 * Math.PI ? xPlusSize : xMinusSize,
+    yCommon,
+    zCommon
+  ];
+  return {
+    bottomLeftCoordinateMeters: bottomLeftCoordMeters,
+    topRightCorrdinateMeters: topRightCoordMeters
+  };
 }

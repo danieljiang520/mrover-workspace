@@ -53,7 +53,8 @@ import {
   randnBm,
   metersToOdom,
   odomToMeters,
-  compassModDeg
+  compassModDeg,
+  obstacleDBToBoundingBox
 } from '../utils/utils';
 import {
   Joystick,
@@ -452,7 +453,9 @@ export default class NavSimulator extends Vue {
       }
 
       if (this.simulatePercep) {
-        const obs:any = Object.assign(this.obstacleMessage, { type: 'Obstacle' });
+        // Convert obstacle to new interface
+        const newObstacleMsg = obstacleDBToBoundingBox(this.obstacleMessage);
+        const obs:any = Object.assign(newObstacleMsg, { type: 'Obstacle' });
         this.publish('/obstacle', obs, true);
 
         /* eslint no-magic-numbers: ["error", { "ignore": [0, 1] }] */

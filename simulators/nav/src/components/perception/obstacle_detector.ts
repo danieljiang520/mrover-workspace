@@ -66,6 +66,9 @@ export default class ObstacleDetector {
   /* location of the ZED (i.e. rover's eyes) */
   private zedOdom!:Odom;
 
+  /* size of the Obstacle */
+  private size!:number;
+
   /************************************************************************************************
    * Public Methods
    ************************************************************************************************/
@@ -215,9 +218,12 @@ export default class ObstacleDetector {
       angle = intervalHeap.maxOccupied + (minIntervalSize / 2);
     }
 
+    console.log(this.size);
+
     return {
       distance: this.obsDist,
-      bearing: angle
+      bearing: angle,
+      size: this.size
     };
   } /* computeObsMsg() */
 
@@ -259,23 +265,27 @@ export default class ObstacleDetector {
   /* Set obsDist to the distance to the closest obstacle. */
   private findClosestObs():void {
     let minDist = Infinity;
+    let tempSize = 0;
     for (let i = 0; i < this.visibleObstacles.length; i += 1) {
       const obs:Obstacle = this.visibleObstacles[i];
       let dist:number = calcDistAndBear(this.zedOdom, obs.odom)[0];
       dist -= obs.size / 2;
       if (dist < minDist) {
         minDist = dist;
+        tempSize = this.visibleObstacles[i].size;
       }
     }
 
     if (minDist === Infinity) {
       this.obsDist = -1;
+      this.size = 0;
     }
     else {
       if (minDist < 0) {
         minDist = 0;
       }
       this.obsDist = minDist;
+      this.size = tempSize;
     }
   } /* findClosestObs() */
 
@@ -290,7 +300,8 @@ export default class ObstacleDetector {
 
     return {
       distance: this.obsDist, /* Will be -1 if okay to go straight ahead (i.e. bearing = 0) */
-      bearing: calcRelativeBearing(this.zedOdom.bearing_deg, angle)
+      bearing: calcRelativeBearing(this.zedOdom.bearing_deg, angle),
+      size: this.size
     };
   } /* isPathClear() */
 

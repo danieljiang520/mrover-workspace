@@ -50,7 +50,8 @@ const state:RoverState = {
 
   obstacleMessage: {
     distance: -1,
-    bearing: 0
+    bearing: 0,
+    size: 0.5
   },
 
   radioSignalStrength: 100,
