@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 /* This file contains utility functions used throughout the application. */
 
 import { ZED } from './constants';
@@ -511,7 +513,7 @@ export function obstacleDBToBoundingBox(obsOld:ObstacleMessage):ObstacleNewInter
     zCommon
   ];
   return {
-    bottomLeftCoordinateMeters: bottomLeftCoordMeters,
-    topRightCorrdinateMeters: topRightCoordMeters
+    bottom_left_coordinate_meters: bottomLeftCoordMeters,
+    top_right_corrdinate_meters: topRightCoordMeters
   };
 }

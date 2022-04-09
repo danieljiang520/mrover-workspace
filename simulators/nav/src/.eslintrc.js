@@ -7,6 +7,9 @@ module.exports = {
     sourceType: 'module',
     ecmaVersion: 2020,
   },
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "settings": {
     "import/resolver": {
       "node": {
@@ -41,6 +44,7 @@ module.exports = {
     "camelcase": ["error", {
       "allow": [
         "bearing_deg",
+        "bottom_left_coordinate_meters",
         "completed_wps",
         "forward_back",
         "gate_width",
@@ -53,6 +57,7 @@ module.exports = {
         "nav_state_name",
         "num_waypoints",
         "signal_strength",
+        "top_right_corrdinate_meters",
         "total_wps"
        ]
     }],

@@ -6,8 +6,8 @@
   <div class="box">
     <fieldset class="obstacle">
       <legend>Obstacle</legend>
-      <p>Distance: {{ dist }} m</p>
-      <p>Bearing: {{ bear }}º</p>
+      <p>bottom_left_coordinate_meters: {{ dist }} m</p>
+      <p>top_right_corrdinate_meters: {{ bear }}º</p>
     </fieldset>
   </div>
 </template>

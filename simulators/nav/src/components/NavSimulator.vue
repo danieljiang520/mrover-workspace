@@ -65,7 +65,8 @@ import {
   TargetListMessage,
   Waypoint,
   ZedGimbalPosition,
-  Point2D
+  Point2D,
+  ObstacleNewInterfaceMessage
 } from '../utils/types';
 import ControlPanel from './control_panel/ControlPanel.vue';
 import Field from './field/Field.vue';
@@ -454,7 +455,8 @@ export default class NavSimulator extends Vue {
 
       if (this.simulatePercep) {
         // Convert obstacle to new interface
-        const newObstacleMsg = obstacleDBToBoundingBox(this.obstacleMessage);
+        const newObstacleMsg:ObstacleNewInterfaceMessage =
+        obstacleDBToBoundingBox(this.obstacleMessage);
         const obs:any = Object.assign(newObstacleMsg, { type: 'Obstacle' });
         this.publish('/obstacle', obs, true);
 
