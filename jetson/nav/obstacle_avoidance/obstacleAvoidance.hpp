@@ -8,14 +8,15 @@
 
 using namespace Eigen;
 
+enum class NavState;
+struct BearingDecision{
+            NavState obstacleControllerOutputState;
+            double desiredBearing;
+};
 
 class ObstacleAvoidance{
     public:
         ObstacleAvoidance(const rapidjson::Document& roverConfig);
-        struct BearingDecision{
-            NavState obstacleControllerOutputState;
-            double desiredBearing;
-        };
 
         class BearingLines {
             public:
