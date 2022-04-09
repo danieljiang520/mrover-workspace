@@ -8,9 +8,11 @@
 #include <string>
 #include <cassert>
 
+#include "test_suites.hpp"
+
 using namespace std;
 
-void run_tests();
+// void run_tests();
 void test_empty_clear_bearing_list();
 void test_zero_zero_is_clear();
 void test_zero_zero_is_clear_many_obs();
@@ -20,14 +22,15 @@ void test_zero_zero_not_clear_many_obs();
 void test_zero_zero_not_clear_many_obs_in_threshold();
 void test_zero_zero_not_clear_many_obs_not_in_threshold();
 
+void test_getIdealBearing(rapidjson::Document & mRoverConfig);
 
-int main() {
-    run_tests();
-    return 0;
-}
+// int main() {
+//     run_tests();
+//     return 0;
+// }
 
-void run_tests() {
-    cout << "Running getBearingDecision Tests";
+void run_tests(rapidjson::Document & mRoverConfig) {
+    cout << "Running getBearingDecision Tests\n";
     cout << "=====================================\n";
 
     test_empty_clear_bearing_list();

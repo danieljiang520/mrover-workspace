@@ -37,7 +37,7 @@
 		"cacheMissMax": 20,
 		"noTargetDist": -1,
 		"maximumPostWidth": 3.0,
-		"clearBearingComparisonThreshold": 0.000001
+		"clearBearingComparisonThreshold": 0.000001,
 		"waypointRadius": 20.0
 	},
 
@@ -80,7 +80,7 @@
 
 	"latencyThreshold":
 	{
-		"threshold": 5.0,
+		"threshold": 5.0
 		
 	}
 

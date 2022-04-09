@@ -11,6 +11,8 @@
 #include "environment.hpp"
 #include "courseProgress.hpp"
 
+#include "obstacle_avoidance/test_suites.hpp"
+
 using namespace rover_msgs;
 
 
@@ -39,33 +41,42 @@ int main() {
     auto rover = std::make_shared<Rover>(config, lcm);
     auto stateMachine = std::make_shared<StateMachine>(config, rover, env, courseProgress, lcm);
 
-    auto autonCallback = [rover](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const AutonState* autonState) mutable {
-        rover->setAutonState(*autonState);
-    };
-    lcm.subscribe("/auton", &decltype(autonCallback)::operator(), &autonCallback);
-
-    auto courseCallback = [courseProgress](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Course* course) mutable {
-        courseProgress->setCourse(*course);
-    };
-    lcm.subscribe("/course", &decltype(courseCallback)::operator(), &courseCallback);
-
-    auto obstacleCallback = [env](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Obstacle* obstacle) mutable {
-        env->setObstacle(*obstacle);
-    };
-    lcm.subscribe("/obstacle", &decltype(obstacleCallback)::operator(), &obstacleCallback);
-
-    auto odometryCallback = [rover](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Odometry* odometry) mutable {
-        rover->setOdometry(*odometry);
-    };
-    lcm.subscribe("/odometry", &decltype(odometryCallback)::operator(), &odometryCallback);
-
-    auto targetCallback = [env](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const TargetList* targetList) mutable {
-        env->setTargets(*targetList);
-    };
-    lcm.subscribe("/target_list", &decltype(targetCallback)::operator(), &targetCallback);
-
-    while (lcm.handle() == 0) {
-        stateMachine->run();
+    bool test = true;
+    if (test) {
+        // Run tests
+        run_tests(config);
     }
+    else {
+
+        auto autonCallback = [rover](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const AutonState* autonState) mutable {
+            rover->setAutonState(*autonState);
+        };
+        lcm.subscribe("/auton", &decltype(autonCallback)::operator(), &autonCallback);
+
+        auto courseCallback = [courseProgress](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Course* course) mutable {
+            courseProgress->setCourse(*course);
+        };
+        lcm.subscribe("/course", &decltype(courseCallback)::operator(), &courseCallback);
+
+        auto obstacleCallback = [env](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Obstacle* obstacle) mutable {
+            env->setObstacle(*obstacle);
+        };
+        lcm.subscribe("/obstacle", &decltype(obstacleCallback)::operator(), &obstacleCallback);
+
+        auto odometryCallback = [rover](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Odometry* odometry) mutable {
+            rover->setOdometry(*odometry);
+        };
+        lcm.subscribe("/odometry", &decltype(odometryCallback)::operator(), &odometryCallback);
+
+        auto targetCallback = [env](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const TargetList* targetList) mutable {
+            env->setTargets(*targetList);
+        };
+        lcm.subscribe("/target_list", &decltype(targetCallback)::operator(), &targetCallback);
+
+        while (lcm.handle() == 0) {
+            stateMachine->run();
+        }
+    }
+
     return 0;
 } // main()
