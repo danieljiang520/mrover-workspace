@@ -25,12 +25,12 @@ class ObstacleAvoidance{
                 Eigen::Vector2d bRight; //Right offset
 
                 BearingLines(double heading_in, double roverWidth) : heading{heading_in} {
-                    n << -cos(heading_in); //Calculate x component of orthogonal vec from heading_in
-                    n << sin(heading_in); //Calculate y component of orthogonal vec from heading_in
-                    bLeft << (-roverWidth / 2.0) * cos(heading_in); //Calculate bLeft x offset from heading_in
-                    bLeft << (roverWidth / 2.0) * sin(heading_in); //Calculate bLeft y offset from heading_in
-                    bRight << (roverWidth / 2.0) * cos(heading_in); //Calculate bRight x offset from heading_in
-                    bRight << (-roverWidth / 2.0) * sin(heading_in); //Calculate bRight y offset from heading_in
+                    n(0) = -cos(heading_in); //Calculate x component of orthogonal vec from heading_in
+                    n(1) = sin(heading_in); //Calculate y component of orthogonal vec from heading_in
+                    bLeft(0) = (-roverWidth / 2.0) * cos(heading_in); //Calculate bLeft x offset from heading_in
+                    bLeft(1) = (roverWidth / 2.0) * sin(heading_in); //Calculate bLeft y offset from heading_in
+                    bRight(0) = (roverWidth / 2.0) * cos(heading_in); //Calculate bRight x offset from heading_in
+                    bRight(1) = (-roverWidth / 2.0) * sin(heading_in); //Calculate bRight y offset from heading_in
                 }
         };
 

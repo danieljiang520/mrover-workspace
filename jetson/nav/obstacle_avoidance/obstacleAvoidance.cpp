@@ -11,9 +11,14 @@ ObstacleAvoidance::ObstacleAvoidance(const rapidjson::Document& roverConfig )
 ObstacleAvoidance::BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
     //Get the vector of clear bearings and see if it is empty
     std::vector<double> clearBearings = getClearBearings(obstacles);
+    
     if(clearBearings.size() == 0) {
-        return {NavState::Turn, mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble() + 1.0};
+        return {NavState::Turn, getLatencyAdjustedDesiredBearing(roverOdom, mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble() + 1.0)};
     }
+
+        
+    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
+    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
 
     //Search for 0.0 in clear bearings
     bool zeroPointZeroClear = false;
@@ -25,8 +30,7 @@ ObstacleAvoidance::BearingDecision ObstacleAvoidance::getDesiredBearingDecision(
         }
     }   
 
-    double idealBearingUnadjusted = getIdealDesiredBearing(roverOdom, dest, clearBearings);
-    double adjustedIdealBearing = getLatencyAdjustedDesiredBearing(roverOdom, idealBearingUnadjusted);
+
 
     //If there is an obstacle directly in front of the Rover calculate the distance to it
     if(!zeroPointZeroClear) {
@@ -108,9 +112,8 @@ bool ObstacleAvoidance::isObstacleInBearing(Obstacle& obstacle, BearingLines& be
 //returns a vector of doubles representing clear bearings through a list of obstacles
 //discretized in 1 degree increments, starting from -FOV to +FOV.
 std::vector<double> ObstacleAvoidance::getClearBearings(std::vector<Obstacle>& obstacles){
-    //TODO implement
     double left_fov_max = -mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble()/2.0;
-    double right_fov_max = -mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble()/2.0;
+    double right_fov_max = mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble()/2.0;
     std::vector<double> possible_bearings;
     for (double heading = left_fov_max; heading < right_fov_max; heading++) {
         BearingLines bearings(heading * 3.1415926535 / 180.0, mRoverConfig[ "roverMeasurements" ][ "width" ].GetDouble()); //Create bearing using radians
@@ -128,11 +131,14 @@ std::vector<double> ObstacleAvoidance::getClearBearings(std::vector<Obstacle>& o
 //returns a bearing that the rover should target to try to get to the destination while also getting around obstacles
 //not latency adjusted
 double ObstacleAvoidance::getIdealDesiredBearing(Odometry roverOdom, Odometry dest, std::vector<double> clearBearings){
+    if (clearBearings.size() == 0) {
+        return mRoverConfig[ "computerVision" ][ "fieldOfViewAngle" ].GetDouble() + 1.0;
+    }
     // First get the ideal bearing
     double idealBearing = calcBearing(roverOdom, dest);
-    cout << "closest to ideal bearing " << idealBearing << "\n";
+    // cout << "closest to ideal bearing " << idealBearing << "\n";
     // Now we must find the closest clear bearings
-    double closestBearing = 900;
+    double closestBearing = 900; //arbitrary max value
     for (const double & bearing : clearBearings) {
         if (abs(bearing - idealBearing) < abs(closestBearing - idealBearing)) {
             // New closest
@@ -147,8 +153,12 @@ double ObstacleAvoidance::getIdealDesiredBearing(Odometry roverOdom, Odometry de
 double ObstacleAvoidance::getLatencyAdjustedDesiredBearing(Odometry roverOdom, double desiredBearing){
     // find latency 
     double threshold = mRoverConfig[ "latencyThreshold" ][ "threshold" ].GetDouble();
+    // std::cout << "have " << desiredBearing << ", thresh " << threshold << "\n";
     if(desiredBearing > threshold){
         return desiredBearing+threshold;
+    }
+    if(-desiredBearing > threshold){
+        return desiredBearing-threshold;
     }
     return desiredBearing;
     
