@@ -15,6 +15,7 @@
 #include "courseProgress.hpp"
 #include "environment.hpp"
 #include "pid.hpp"
+#include "obstacle_avoidance/obstacleAvoidance.hpp"
 
 
 using namespace rover_msgs;
@@ -61,7 +62,8 @@ enum class NavState {
 enum class DriveStatus {
     Arrived,
     OnCourse,
-    OffCourse
+    OffCourse,
+    TurnFromObstacle
 }; // DriveStatus
 
 // This class creates a Rover object which can perform operations that
@@ -70,7 +72,7 @@ class Rover {
 public:
     Rover(const rapidjson::Document& config, lcm::LCM& lcm_in);
 
-    DriveStatus drive(const Odometry& destination);
+    DriveStatus drive(std::shared_ptr<Environment> const& env, const Odometry& destination);
 
     DriveStatus drive(double distance, double bearing, bool target = false);
 
@@ -170,4 +172,7 @@ private:
     // Count hits for avoiding FPs
     int mCountLeftHits = 0;
     int mCountRightHits = 0;
+
+    //Obstacle Avoidance Manager
+    ObstacleAvoidance mObstacleAvoider;
 };

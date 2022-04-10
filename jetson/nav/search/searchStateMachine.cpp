@@ -84,7 +84,7 @@ NavState SearchStateMachine::executeSearchDrive() {
         return NavState::TurnToTarget;
     }
 
-    DriveStatus driveStatus = rover->drive(mSearchPoints.front());
+    DriveStatus driveStatus = rover->drive(mEnv, mSearchPoints.front());
 
     if (driveStatus == DriveStatus::Arrived) {
         mSearchPoints.pop_front();

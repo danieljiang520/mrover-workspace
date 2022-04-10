@@ -12,7 +12,8 @@ Rover::Rover(const rapidjson::Document& config, lcm::LCM& lcmObject)
           mBearingPid(config["bearingPid"]["kP"].GetDouble(),
                       config["bearingPid"]["kI"].GetDouble(),
                       config["bearingPid"]["kD"].GetDouble()),
-          mLongMeterInMinutes(-1) {
+          mLongMeterInMinutes(-1),
+          mObstacleAvoider(config) {
 } // Rover(
 
 // Sends a joystick command to drive forward from the current odometry
@@ -20,9 +21,16 @@ Rover::Rover(const rapidjson::Document& config, lcm::LCM& lcmObject)
 // the rover small amounts as "course corrections".
 // The return value indicates if the rover has arrived or if it is
 // on-course or off-course.
-DriveStatus Rover::drive(const Odometry& destination) {
+DriveStatus Rover::drive(std::shared_ptr<Environment> const& env, const Odometry& destination) {
     double distance = estimateNoneuclid(mOdometry, destination);
-    double bearing = calcBearing(mOdometry, destination);
+    //using obstacle avoidance bearing ->
+    //double bearing = calcBearing(mOdometry, destination);
+    BearingDecision bearingDecision = mObstacleAvoider.getDesiredBearingDecision(env->getObstacle(), mOdometry, destination);
+    double bearing = bearingDecision.desiredBearing;
+    if (bearingDecision.obstacleControllerOutputState == NavState::Turn){
+        //breakaway to turn state - we say we're off course and the turn controller will actually turn away from obstacle
+        return DriveStatus::TurnFromObstacle;
+    }
     return drive(distance, bearing, false);
 } // drive()
 

@@ -180,7 +180,7 @@ NavState StateMachine::executeDrive() {
 //        return NavState::TurnToTarget;
 //    }
 
-    DriveStatus driveStatus = mRover->drive(nextWaypoint.odom);
+    DriveStatus driveStatus = mRover->drive(mEnv,nextWaypoint.odom);
 
     if (driveStatus == DriveStatus::Arrived) {
         if (nextWaypoint.search || nextWaypoint.gate) {
