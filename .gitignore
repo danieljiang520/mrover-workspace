@@ -15,3 +15,4 @@ base_station/gui/src/static/map
 /core.*
 jetson/test**
 beaglebone/test**
+build.txt

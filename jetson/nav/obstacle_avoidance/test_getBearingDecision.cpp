@@ -75,10 +75,7 @@ void run_tests(rapidjson::Document & mRoverConfig) {
 void test_basic_clear_bearing(rapidjson::Document & mRoverConfig) {
     ObstacleAvoidance oa(mRoverConfig);
     vector<Obstacle> v;
-    Odometry roverOdom = {38, 24.384, -110, 47.52, 30.0, 3};
-    Odometry dest = {38, 24.484, -110, 47.52, 30.0, 3};
     Obstacle obs = {{-1, 0, 4}, {1, 1, 5}};
-    // Obstacle obs = {{-2, 0, 3}, {2, 1, 4}};
     v.push_back(obs);
     vector<double> clearBearings = oa.test_getClearBearings(v);
 }

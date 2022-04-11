@@ -1,24 +1,23 @@
 #pragma once
-// #ifndef OBSTACLE_AVOIDANCE_HPP
-// #define OBSTACLE_AVOIDANCE_HPP
 
 #include <vector>
 #include "rover_msgs/Obstacle.hpp"
 #include "rover_msgs/Odometry.hpp"
-#include "rover.hpp"
+// #include "utilities.hpp"
 #include <eigen3/Eigen/Dense>
+#include "rapidjson/document.h"
 #include <cmath>
 #include <fstream>
 
-using namespace Eigen;
+enum class NavState;
+
 
 
 class ObstacleAvoidance {
     public:
         ObstacleAvoidance(const rapidjson::Document& roverConfig);
-}
        
- struct BearingDecision {
+        struct BearingDecision {
                     NavState obstacleControllerOutputState;
                     double desiredBearing;
         };
@@ -41,41 +40,38 @@ class ObstacleAvoidance {
         };
 
         //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
-        BearingDecision getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest);
+        BearingDecision getDesiredBearingDecision(std::vector<rover_msgs::Obstacle>& obstacles, rover_msgs::Odometry roverOdom, rover_msgs::Odometry dest);
 
         //TO BE REMOVED WHEN UNIT TESTING IS COMPLETE
-        std::vector<double> test_getClearBearings(std::vector<Obstacle>& obstacles) {
+        std::vector<double> test_getClearBearings(std::vector<rover_msgs::Obstacle>& obstacles) {
             return getClearBearings(obstacles);
         }
 
-        double test_getIdealDesiredBearing(Odometry roverOdom, Odometry dest, std::vector<double> clearBearings) {
+        double test_getIdealDesiredBearing(rover_msgs::Odometry roverOdom, rover_msgs::Odometry dest, std::vector<double> clearBearings) {
             return getIdealDesiredBearing(roverOdom, dest, clearBearings);
         }
 
-        double test_getLatencyAdjustedDesiredBearing(Odometry roverOdom, double desiredBearing) {
+        double test_getLatencyAdjustedDesiredBearing(rover_msgs::Odometry roverOdom, double desiredBearing) {
             return getLatencyAdjustedDesiredBearing(roverOdom, desiredBearing);
         }
 
-        bool test_isObstacleInBearing(Obstacle& obstacle, BearingLines& bearings) {
+        bool test_isObstacleInBearing(rover_msgs::Obstacle& obstacle, BearingLines& bearings) {
             return isObstacleInBearing(obstacle, bearings);
         }
     
     private:
         //returns a vector of doubles representing clear bearings through a list of obstacles
         //discretized in 1 degree increments, starting from -FOV to +FOV.
-        std::vector<double> getClearBearings(std::vector<Obstacle>& obstacles);
+        std::vector<double> getClearBearings(std::vector<rover_msgs::Obstacle>& obstacles);
         
         //returns a bearing that the rover should target to try to get to the destination while also getting around obstacles
         //not latency adjusted
-        double getIdealDesiredBearing(Odometry roverOdom, Odometry dest, std::vector<double> clearBearings);
+        double getIdealDesiredBearing(rover_msgs::Odometry roverOdom, rover_msgs::Odometry dest, std::vector<double> clearBearings);
 
         //returns an adjusted target bearing based on latency specifications (thresholding on maximum allowable change in bearing)
-        double getLatencyAdjustedDesiredBearing(Odometry roverOdom, double desiredBearing);
+        double getLatencyAdjustedDesiredBearing(rover_msgs::Odometry roverOdom, double desiredBearing);
 
-        bool isObstacleInBearing(Obstacle& obstacle, BearingLines& bearings);
+        bool isObstacleInBearing(rover_msgs::Obstacle& obstacle, BearingLines& bearings);
 
         const rapidjson::Document& mRoverConfig;
 };
-
-
-// #endif // OBSTACLE_AVOIDANCE_HPP

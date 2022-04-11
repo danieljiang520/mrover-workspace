@@ -7,6 +7,7 @@
 #include "rover_msgs/AutonState.hpp"
 #include "rover_msgs/Bearing.hpp"
 #include "rover_msgs/Course.hpp"
+#include "rover_msgs/Obstacle.hpp"
 #include "rover_msgs/Odometry.hpp"
 #include "rover_msgs/TargetList.hpp"
 #include "rover_msgs/Waypoint.hpp"
@@ -15,8 +16,7 @@
 #include "courseProgress.hpp"
 #include "environment.hpp"
 #include "pid.hpp"
-
-
+#include "obstacle_avoidance/obstacleAvoidance.hpp"
 
 using namespace rover_msgs;
 
@@ -58,7 +58,6 @@ enum class NavState {
 
 }; // AutonState
 
-#include "obstacle_avoidance/obstacleAvoidance.hpp"
 // This class is the representation of the drive status.
 enum class DriveStatus {
     Arrived,
