@@ -4,21 +4,23 @@
 
 #include "rover_msgs/Obstacle.hpp"
 #include "rover_msgs/TargetList.hpp"
+#include "rover_msgs/ObstacleList.hpp"
 
 
 using namespace rover_msgs;
 
 class Environment {
 private:
-    Obstacle mObstacle{0.0, 0.0, -1.0};
+    std::vector<Obstacle> mObstacles;
     TargetList mTargets{};
 
 public:
     Environment();
 
-    Obstacle getObstacle();
+    std::vector<Obstacle> & getObstacles();
 
-    void setObstacle(Obstacle const& obstacle);
+    void setObstacles(const std::vector<Obstacle> & obstacles);
+    void setObstacles(const ObstacleList* obstacleList);
 
     TargetList getTargets();
 

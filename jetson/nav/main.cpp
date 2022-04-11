@@ -58,10 +58,10 @@ int main() {
         };
         lcm.subscribe("/course", &decltype(courseCallback)::operator(), &courseCallback);
 
-        auto obstacleCallback = [env](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Obstacle* obstacle) mutable {
-            env->setObstacle(*obstacle);
+        auto obstacleCallback = [env](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const ObstacleList* obstacleList) mutable {
+            env->setObstacles(obstacleList);
         };
-        lcm.subscribe("/obstacle", &decltype(obstacleCallback)::operator(), &obstacleCallback);
+        lcm.subscribe("/obstacle_list", &decltype(obstacleCallback)::operator(), &obstacleCallback);
 
         auto odometryCallback = [rover](const lcm::ReceiveBuffer* recBuf, const std::string& channel, const Odometry* odometry) mutable {
             rover->setOdometry(*odometry);

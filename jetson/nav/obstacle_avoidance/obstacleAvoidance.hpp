@@ -1,3 +1,7 @@
+#pragma once
+// #ifndef OBSTACLE_AVOIDANCE_HPP
+// #define OBSTACLE_AVOIDANCE_HPP
+
 #include <vector>
 #include "rover_msgs/Obstacle.hpp"
 #include "rover_msgs/Odometry.hpp"
@@ -8,15 +12,16 @@
 
 using namespace Eigen;
 
-enum class NavState;
-struct BearingDecision{
-            NavState obstacleControllerOutputState;
-            double desiredBearing;
-};
 
-class ObstacleAvoidance{
+class ObstacleAvoidance {
     public:
         ObstacleAvoidance(const rapidjson::Document& roverConfig);
+}
+       
+ struct BearingDecision {
+                    NavState obstacleControllerOutputState;
+                    double desiredBearing;
+        };
 
         class BearingLines {
             public:
@@ -71,3 +76,6 @@ class ObstacleAvoidance{
 
         const rapidjson::Document& mRoverConfig;
 };
+
+
+// #endif // OBSTACLE_AVOIDANCE_HPP

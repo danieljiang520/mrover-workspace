@@ -2,6 +2,7 @@
 #include "utilities.hpp"
 #include "rover_msgs/Joystick.hpp"
 
+#include <vector>
 #include <cmath>
 #include <iostream>
 
@@ -25,7 +26,7 @@ DriveStatus Rover::drive(std::shared_ptr<Environment> const& env, const Odometry
     double distance = estimateNoneuclid(mOdometry, destination);
     //using obstacle avoidance bearing ->
     //double bearing = calcBearing(mOdometry, destination);
-    BearingDecision bearingDecision = mObstacleAvoider.getDesiredBearingDecision(env->getObstacle(), mOdometry, destination);
+    ObstacleAvoidance::BearingDecision bearingDecision = mObstacleAvoider.getDesiredBearingDecision(env->getObstacles(), mOdometry, destination);
     double bearing = bearingDecision.desiredBearing;
     if (bearingDecision.obstacleControllerOutputState == NavState::Turn){
         //breakaway to turn state - we say we're off course and the turn controller will actually turn away from obstacle

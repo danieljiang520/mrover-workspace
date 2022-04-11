@@ -75,7 +75,7 @@ NavState GateStateMachine::executeGateSpin() {
     double waitStepSize = mRoverConfig["search"]["searchWaitStepSize"].GetDouble();
     static double nextStop = 0; // to force the rover to wait initially
     static double mOriginalSpinAngle = 0; //initialize, is corrected on first call
-    double maximumPostWidth = mRoverConfig[ "navThresholds" ][ "maximumPostWidth" ].GetDouble();
+    // double maximumPostWidth = mRoverConfig[ "navThresholds" ][ "maximumPostWidth" ].GetDouble();
 
     if (rover->rightCacheTarget().distance >= 0 ||
         (rover->leftCacheTarget().distance >= 0 && rover->leftCacheTarget().id != lastKnownRightPost.id)) {
@@ -159,7 +159,7 @@ NavState GateStateMachine::executeGateDrive() {
     }
 
     const Odometry& nextSearchPoint = mGateSearchPoints.front();
-    DriveStatus driveStatus = rover->drive(nextSearchPoint);
+    DriveStatus driveStatus = rover->drive(mStateMachine.lock()->getEnv(), nextSearchPoint);
 
     if (driveStatus == DriveStatus::Arrived) {
         mGateSearchPoints.pop_front();
@@ -181,7 +181,7 @@ NavState GateStateMachine::executeGateTurnToCentPoint() {
 
 // Drive to the center point defined by the two posts
 NavState GateStateMachine::executeGateDriveToCentPoint() {
-    DriveStatus driveStatus = mStateMachine.lock()->getRover()->drive(centerPoint1);
+    DriveStatus driveStatus = mStateMachine.lock()->getRover()->drive(mStateMachine.lock()->getEnv(), centerPoint1);
 
     if (driveStatus == DriveStatus::Arrived) {
         return NavState::GateFace;
@@ -260,7 +260,7 @@ NavState GateStateMachine::executeGateTurnToGateCenter() {
 
 // Drive through gate posts
 NavState GateStateMachine::executeGateDriveThrough() {
-    DriveStatus driveStatus = mStateMachine.lock()->getRover()->drive(centerPoint2);
+    DriveStatus driveStatus = mStateMachine.lock()->getRover()->drive(mStateMachine.lock()->getEnv(), centerPoint2);
 
     if (driveStatus == DriveStatus::Arrived) {
         if (!isCorrectGateDir) // Check if we drove through the incorrect direction

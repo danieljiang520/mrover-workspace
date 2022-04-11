@@ -172,7 +172,7 @@ NavState StateMachine::executeTurn() {
 // it goes to turn around it. Else the rover keeps driving to the next Waypoint.
 NavState StateMachine::executeDrive() {
     Waypoint const& nextWaypoint = mCourseProgress->getRemainingWaypoints().front();
-    double distance = estimateNoneuclid(mRover->odometry(), nextWaypoint.odom);
+    // double distance = estimateNoneuclid(mRover->odometry(), nextWaypoint.odom);
 
 //    if ((nextWaypoint.search || nextWaypoint.gate)
 //        && mRover->leftCacheTarget().id == nextWaypoint.id

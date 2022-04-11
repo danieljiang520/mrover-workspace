@@ -1,5 +1,6 @@
-#ifndef GATE_STATE_MACHINE_HPP
-#define GATE_STATE_MACHINE_HPP
+#pragma once
+// #ifndef GATE_STATE_MACHINE_HPP
+// #define GATE_STATE_MACHINE_HPP
 
 #include <deque>
 #include <memory>
@@ -120,4 +121,4 @@ private:
 std::shared_ptr<GateStateMachine>
 GateFactory(std::weak_ptr<StateMachine> stateMachine, const rapidjson::Document& roverConfig);
 
-#endif //GATE_STATE_MACHINE_HPP
+// #endif //GATE_STATE_MACHINE_HPP

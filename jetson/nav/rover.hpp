@@ -15,7 +15,7 @@
 #include "courseProgress.hpp"
 #include "environment.hpp"
 #include "pid.hpp"
-#include "obstacle_avoidance/obstacleAvoidance.hpp"
+
 
 
 using namespace rover_msgs;
@@ -58,6 +58,7 @@ enum class NavState {
 
 }; // AutonState
 
+#include "obstacle_avoidance/obstacleAvoidance.hpp"
 // This class is the representation of the drive status.
 enum class DriveStatus {
     Arrived,
@@ -112,7 +113,7 @@ public:
 
     void setOdometry(Odometry const& odometry);
 
-    void updateTargets(std::shared_ptr<Environment> const& env, std::shared_ptr<CourseProgress> const& course);
+    void updateTargets(std::shared_ptr<Environment>const &env, std::shared_ptr<CourseProgress> const& course);
 
     void setState(NavState state);
 
