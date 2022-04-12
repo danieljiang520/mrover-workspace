@@ -136,17 +136,17 @@ export interface Obstacle {
   top_right_coordinate_meters:number[];
 }
 
-/* Interface representing the Obstacle LCM. This must be the same as the
-   Obstacle LCM. */
-export interface ObstacleOld {
-  distance:number; /* meters from rover */
-  bearing:number; /* degrees from rover */
-  size:number;    /* meters */
-}
+// /* Interface representing the Obstacle LCM. This must be the same as the
+//    Obstacle LCM. */
+// export interface ObstacleOld {
+//   distance:number; /* meters from rover */
+//   bearing:number; /* degrees from rover */
+//   size:number;    /* meters */
+// }
 
 export interface ObstacleListMessage {
   numObstacles:number;
-  obstaclesList:Obstacle[];
+  obstacles:Obstacle[];
 }
 
 /* Interface representing the options for drawing obstacles used in the
@@ -261,7 +261,7 @@ export interface RoverState {
   currSpeed:Speeds;
   joystick:Joystick;
   navStatus:NavStatus;
-  obstacleMessage:ObstacleOld;
+  obstacleMessage:ObstacleListMessage;
   radioSignalStrength:number;
   targetList:TargetListMessage;
   zedGimbalCmd:ZedGimbalPosition; /* Desired position of the ZED gimbal. */

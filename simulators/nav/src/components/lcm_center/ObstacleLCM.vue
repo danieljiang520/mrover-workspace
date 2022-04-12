@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import { ObstacleMessage } from '../../utils/types';
+import { ObstacleListMessage } from '../../utils/types';
 
 @Component({})
 export default class ObstacleLCM extends Vue {
@@ -25,7 +25,7 @@ export default class ObstacleLCM extends Vue {
    * Vuex Getters
    ************************************************************************************************/
   @Getter
-  private readonly obstacleMessage!:ObstacleMessage;
+  private readonly obstacleMessage!:ObstacleListMessage;
 
 
   /************************************************************************************************
@@ -34,12 +34,12 @@ export default class ObstacleLCM extends Vue {
   /* distance to the closest obstacle (if one exists) in the obstacle message
      LCM */
   private get dist():number {
-    return Number(this.obstacleMessage.distance.toFixed(2));
+    return Number(this.obstacleMessage.numObstacles.toFixed(2));
   }
 
   /* bearing to turn to in the obstacle message LCM */
   private get bear():number {
-    return Number(this.obstacleMessage.bearing.toFixed(2));
+    return Number(this.obstacleMessage.numObstacles.toFixed(2));
   }
 }
 </script>

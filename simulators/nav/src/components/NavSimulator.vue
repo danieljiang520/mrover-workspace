@@ -54,19 +54,17 @@ import {
   metersToOdom,
   odomToMeters,
   compassModDeg,
-  obstacleDBToBoundingBox
 } from '../utils/utils';
 import {
   Joystick,
   NavStatus,
-  ObstacleMessage,
+  ObstacleListMessage,
   Odom,
   Speeds,
   TargetListMessage,
   Waypoint,
   ZedGimbalPosition,
-  Point2D,
-  ObstacleNewInterfaceMessage
+  Point2D
 } from '../utils/types';
 import ControlPanel from './control_panel/ControlPanel.vue';
 import Field from './field/Field.vue';
@@ -132,7 +130,7 @@ export default class NavSimulator extends Vue {
   private readonly navConnected!:boolean;
 
   @Getter
-  private readonly obstacleMessage!:ObstacleMessage;
+  private readonly obstacleMessage!:ObstacleListMessage;
 
   @Getter
   private readonly paused!:boolean;
@@ -198,7 +196,7 @@ export default class NavSimulator extends Vue {
   private readonly setNavStatus!:(newNavStatus:NavStatus)=>void;
 
   @Mutation
-  private readonly setObstacleMessage!:(newObstacle:ObstacleMessage)=>void;
+  private readonly setObstacleMessage!:(newObstacle:ObstacleListMessage)=>void;
 
   @Mutation
   private readonly setRadioStrength!:(strength:number)=>void;
@@ -454,10 +452,7 @@ export default class NavSimulator extends Vue {
       }
 
       if (this.simulatePercep) {
-        // Convert obstacle to new interface
-        const newObstacleMsg:ObstacleNewInterfaceMessage =
-        obstacleDBToBoundingBox(this.obstacleMessage);
-        const obs:any = Object.assign(newObstacleMsg, { type: 'Obstacle' });
+        const obs:any = Object.assign(this.obstacleMessage, { type: 'Obstacle' });
         this.publish('/obstacle', obs, true);
 
         /* eslint no-magic-numbers: ["error", { "ignore": [0, 1] }] */

@@ -12,7 +12,6 @@ import {
   Speeds,
   ZedGimbalPosition,
   Obstacle,
-  ObstacleOld,
   ObstacleField
 } from './types';
 
@@ -497,41 +496,42 @@ export function randnBm(min, max, skew):number {
   return num;
 }
 
-export function obstacleDBToBoundingBox(obsOld:ObstacleOld):Obstacle {
-  const xPlusSize = (obsOld.distance * Math.sin(obsOld.bearing)) + obsOld.size;
-  const xMinusSize = (obsOld.distance * Math.sin(obsOld.bearing)) - obsOld.size;
+// export function obstacleDBToBoundingBox(obsOld:ObstacleOld):Obstacle {
+//   const xPlusSize = (obsOld.distance * Math.sin(obsOld.bearing)) + obsOld.size;
+//   const xMinusSize = (obsOld.distance * Math.sin(obsOld.bearing)) - obsOld.size;
+//   const yCommon = 0;
+//   const zCommon = obsOld.distance * Math.cos(obsOld.bearing);
+//   const bottomLeftCoordMeters = [
+//     obsOld.bearing > 2 * Math.PI ? xMinusSize : xPlusSize,
+//     yCommon,
+//     zCommon
+//   ];
+
+//   const topRightCoordMeters = [
+//     obsOld.bearing > 2 * Math.PI ? xPlusSize : xMinusSize,
+//     yCommon,
+//     zCommon
+//   ];
+//   return {
+//     bottom_left_coordinate_meters: bottomLeftCoordMeters,
+//     top_right_coordinate_meters: topRightCoordMeters
+//   };
+// }
+
+export function obstacleFieldToBoundingBox(obsOld:ObstacleField, currOdom:Odom):Obstacle {
+  const [dist, bear]:[number, number] = calcDistAndBear(obsOld.odom,currOdom);
+  const xPlusSize = (dist * Math.sin(bear)) + obsOld.size;
+  const xMinusSize = (dist * Math.sin(bear)) - obsOld.size;
   const yCommon = 0;
-  const zCommon = obsOld.distance * Math.cos(obsOld.bearing);
+  const zCommon = dist * Math.cos(bear);
   const bottomLeftCoordMeters = [
-    obsOld.bearing > 2 * Math.PI ? xMinusSize : xPlusSize,
+    bear > 2 * Math.PI ? xMinusSize : xPlusSize,
     yCommon,
     zCommon
   ];
 
   const topRightCoordMeters = [
-    obsOld.bearing > 2 * Math.PI ? xPlusSize : xMinusSize,
-    yCommon,
-    zCommon
-  ];
-  return {
-    bottom_left_coordinate_meters: bottomLeftCoordMeters,
-    top_right_coordinate_meters: topRightCoordMeters
-  };
-}
-
-export function obstacleFieldToObstacle(obsOld:ObstacleField):Obstacle {
-  const xPlusSize = (obsOld.distance * Math.sin(obsOld.bearing)) + obsOld.size;
-  const xMinusSize = (obsOld.distance * Math.sin(obsOld.bearing)) - obsOld.size;
-  const yCommon = 0;
-  const zCommon = obsOld.distance * Math.cos(obsOld.bearing);
-  const bottomLeftCoordMeters = [
-    obsOld.bearing > 2 * Math.PI ? xMinusSize : xPlusSize,
-    yCommon,
-    zCommon
-  ];
-
-  const topRightCoordMeters = [
-    obsOld.bearing > 2 * Math.PI ? xPlusSize : xMinusSize,
+    bear > 2 * Math.PI ? xPlusSize : xMinusSize,
     yCommon,
     zCommon
   ];

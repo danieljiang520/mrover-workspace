@@ -4,11 +4,11 @@
 import {
   FieldOfViewOptions,
   ObstacleField,
-  ObstacleOld,
   Odom,
   Point2D,
   ZedGimbalPosition,
-  Obstacle
+  Obstacle,
+  ObstacleListMessage
 } from '../../utils/types';
 import {
   calcDistAndBear,
@@ -18,7 +18,8 @@ import {
   compassModDeg,
   odomToCanvas,
   radToDeg,
-  transformPoint
+  transformPoint,
+  obstacleFieldToBoundingBox
 } from '../../utils/utils';
 import { Interval, OpenIntervalHeap } from './open_interval_heap';
 import { ROVER } from '../../utils/constants';
@@ -95,19 +96,20 @@ export default class ObstacleDetector {
   } /* constructor() */
 
   /* Calculate the Obstacle LCM message. */
-  computeObsMsg():ObstacleOld {
-    let obsMsg:ObstacleOld|null = null;
+  computeObsMsg():ObstacleListMessage {
+    let obsMsg:ObstacleListMessage|null = null;
 
     /* Step 1: filter out obstacles not in field of view */
     this.visibleObstacles = this.obstacles.filter((obs) => this.isObsVisible(obs));
 
     // Conver all visible obstacles to bounding box
-    let obstaclesNew:Obstacle[] = [];
-    this.visibleObstacles.forEach((obsCanvas) => {
-      const obs:Obstacle = {}
-      obstaclesNew.push();
+    let obstaclesList:Obstacle[] = [];
+    this.visibleObstacles.forEach((obsField) => {
+      const obs = obstacleFieldToBoundingBox(obsField,this.currOdom);
+      obstaclesList.push(obs);
     });
 
+    return {numObstacles: obstaclesList.length, obstacles: obstaclesList};
 
     // /* Step 2: find distance to closest obstacle in path (-1 if no obstacles) */
     // this.findClosestObs();
@@ -229,11 +231,11 @@ export default class ObstacleDetector {
 
     // console.log(this.size);
 
-    return {
-      distance: this.obsDist,
-      bearing: angle,
-      size: this.size
-    };
+    // return {
+    //   distance: this.obsDist,
+    //   bearing: angle,
+    //   size: this.size
+    // };
   } /* computeObsMsg() */
 
   /* Update canvas height on change. */
@@ -300,19 +302,19 @@ export default class ObstacleDetector {
 
   /* Does there appear to be a clear path in the direction of angle (angle is
      in degrees from north)? */
-  private isPathClear(angle:number):ObstacleOld|null {
-    for (let i = 0; i < this.visibleObstacles.length; i += 1) {
-      if (this.isObsInPath(this.visibleObstacles[i], angle)) {
-        return null;
-      }
-    }
+  // private isPathClear(angle:number):ObstacleOld|null {
+  //   for (let i = 0; i < this.visibleObstacles.length; i += 1) {
+  //     if (this.isObsInPath(this.visibleObstacles[i], angle)) {
+  //       return null;
+  //     }
+  //   }
 
-    return {
-      distance: this.obsDist, /* Will be -1 if okay to go straight ahead (i.e. bearing = 0) */
-      bearing: calcRelativeBearing(this.zedOdom.bearing_deg, angle),
-      size: this.size
-    };
-  } /* isPathClear() */
+  //   return {
+  //     distance: this.obsDist, /* Will be -1 if okay to go straight ahead (i.e. bearing = 0) */
+  //     bearing: calcRelativeBearing(this.zedOdom.bearing_deg, angle),
+  //     size: this.size
+  //   };
+  // } /* isPathClear() */
 
   /* Is obs in a path in the direction of angle. Note that this does not take
      into account the field of view angles. This works because when this

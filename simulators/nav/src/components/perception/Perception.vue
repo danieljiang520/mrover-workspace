@@ -18,7 +18,7 @@ import {
   FieldOfViewOptions,
   Gate,
   Obstacle,
-  ObstacleMessage,
+  ObstacleListMessage,
   Odom,
   TargetListMessage,
   ZedGimbalPosition
@@ -65,7 +65,7 @@ export default class Perception extends Vue {
    * Vuex Mutations
    ************************************************************************************************/
   @Mutation
-  private readonly setObstacleMessage!:(newObstacle:ObstacleMessage)=>void;
+  private readonly setObstacleMessage!:(newObstacle:ObstacleListMessage)=>void;
 
   @Mutation
   private readonly setTargetList!:(newTargetList:TargetListMessage)=>void;
@@ -232,7 +232,7 @@ export default class Perception extends Vue {
     }
 
     /* Recompute obstacle LCM */
-    const obsMsg:ObstacleMessage = this.obstacleDetector.computeObsMsg();
+    const obsMsg:ObstacleListMessage = this.obstacleDetector.computeObsMsg();
     this.setObstacleMessage(obsMsg);
   } /* computeVisibleObstacles() */
 

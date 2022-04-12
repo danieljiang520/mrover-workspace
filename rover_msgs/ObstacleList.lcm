@@ -1,0 +1,6 @@
+package rover_msgs;
+
+struct ObstacleList {
+    int32_t numObstacles;
+	Obstacle obstacles[1];
+}
