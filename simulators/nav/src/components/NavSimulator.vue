@@ -53,7 +53,7 @@ import {
   randnBm,
   metersToOdom,
   odomToMeters,
-  compassModDeg,
+  compassModDeg
 } from '../utils/utils';
 import {
   Joystick,
