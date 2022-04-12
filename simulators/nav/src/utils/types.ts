@@ -67,7 +67,7 @@ export interface FieldState {
   canvasHeight:number; /* pixels */
   centerOdom:Odom;
   gates:Gate[];
-  obstacles:Obstacle[];
+  obstacles:ObstacleField[];
   referencePoints:Odom[];
   repeaterLoc:Odom|null;
   size:number;
@@ -123,7 +123,7 @@ export interface NavStatus {
 
 
 /* Interface for representing obstacles on the field. */
-export interface Obstacle {
+export interface ObstacleField {
   odom:Odom;
   size:number; /* meters */
 }
@@ -131,19 +131,23 @@ export interface Obstacle {
 /* Type representing the Obstacle LCM. This must be the same as the
   Obstacle LCM. +x is to the right of camera, +y is down from camera,
   +z is forward (out) from the camera */
-export interface ObstacleNewInterfaceMessage {
+export interface Obstacle {
   bottom_left_coordinate_meters:number[];
   top_right_coordinate_meters:number[];
 }
 
 /* Interface representing the Obstacle LCM. This must be the same as the
    Obstacle LCM. */
-export interface ObstacleMessage {
+export interface ObstacleOld {
   distance:number; /* meters from rover */
   bearing:number; /* degrees from rover */
   size:number;    /* meters */
 }
 
+export interface ObstacleListMessage {
+  numObstacles:number;
+  obstaclesList:Obstacle[];
+}
 
 /* Interface representing the options for drawing obstacles used in the
    DrawModule component. */
@@ -257,7 +261,7 @@ export interface RoverState {
   currSpeed:Speeds;
   joystick:Joystick;
   navStatus:NavStatus;
-  obstacleMessage:ObstacleMessage;
+  obstacleMessage:ObstacleOld;
   radioSignalStrength:number;
   targetList:TargetListMessage;
   zedGimbalCmd:ZedGimbalPosition; /* Desired position of the ZED gimbal. */

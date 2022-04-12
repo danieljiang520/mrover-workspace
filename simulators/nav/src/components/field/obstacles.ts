@@ -2,7 +2,7 @@
    canvas. */
 
 import { odomToCanvas } from '../../utils/utils';
-import { Obstacle, Odom, Point2D } from '../../utils/types';
+import { ObstacleField, Odom, Point2D } from '../../utils/types';
 
 /**************************************************************************************************
  * Constants
@@ -22,7 +22,7 @@ export default class CanvasObstacles {
   private ctx!:CanvasRenderingContext2D;
 
   /* list of all obstacles on field */
-  private obstacles!:Obstacle[];
+  private obstacles!:ObstacleField[];
 
   /* scale of the canvas in pixels/meter */
   private scale!:number;
@@ -32,7 +32,7 @@ export default class CanvasObstacles {
    ************************************************************************************************/
   /* Initialize CanvasObstacles instance. */
   constructor(
-      obstacles:Obstacle[],
+      obstacles:ObstacleField[],
       canvasCent:Odom,
       scale:number /* pixels/meter */
   ) {

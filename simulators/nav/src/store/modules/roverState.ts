@@ -4,7 +4,7 @@
 import {
   Joystick,
   NavStatus,
-  ObstacleMessage,
+  ObstacleOld,
   Odom,
   RoverState,
   Speeds,
@@ -90,7 +90,7 @@ const getters = {
 
   navStatus: (roverState:RoverState):NavStatus => roverState.navStatus,
 
-  obstacleMessage: (roverState:RoverState):ObstacleMessage => roverState.obstacleMessage,
+  obstacleMessage: (roverState:RoverState):ObstacleOld => roverState.obstacleMessage,
 
   radioStrength: (roverState:RoverState):number => roverState.radioSignalStrength,
 
@@ -123,7 +123,7 @@ const mutations = {
     Object.assign(roverState.navStatus, newNavStatus);
   },
 
-  setObstacleMessage: (roverState:RoverState, newObstacle:ObstacleMessage):void => {
+  setObstacleMessage: (roverState:RoverState, newObstacle:ObstacleOld):void => {
     Object.assign(roverState.obstacleMessage, newObstacle);
   },
 

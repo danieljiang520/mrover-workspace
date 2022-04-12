@@ -5,7 +5,7 @@ import {
   ArTag,
   FieldState,
   Gate,
-  Obstacle,
+  ObstacleField,
   Odom,
   Waypoint
 } from '../../utils/types';
@@ -44,7 +44,7 @@ const getters = {
 
   gates: (fieldState:FieldState):Gate[] => fieldState.gates,
 
-  obstacles: (fieldState:FieldState):Obstacle[] => fieldState.obstacles,
+  obstacles: (fieldState:FieldState):ObstacleField[] => fieldState.obstacles,
 
   referencePoints: (fieldState:FieldState):Odom[] => fieldState.referencePoints,
 
@@ -73,8 +73,8 @@ const mutations = {
        the assignment operator in JavaScript. */
   },
 
-  editObstacle: (fieldState:FieldState, obstacleEdit:[Obstacle, number]):void => {
-    const [updatedObstacle, index]:[Obstacle, number] = obstacleEdit;
+  editObstacle: (fieldState:FieldState, obstacleEdit:[ObstacleField, number]):void => {
+    const [updatedObstacle, index]:[ObstacleField, number] = obstacleEdit;
     Object.assign(fieldState.obstacles[index], updatedObstacle);
 
     /* Note that `fieldState.obstacles[index] = updatedObstacle` will not work.
@@ -99,7 +99,7 @@ const mutations = {
     fieldState.gates.push(newGate);
   },
 
-  pushObstacle: (fieldState:FieldState, newObstacle:Obstacle):void => {
+  pushObstacle: (fieldState:FieldState, newObstacle:ObstacleField):void => {
     fieldState.obstacles.push(newObstacle);
   },
 
@@ -159,7 +159,7 @@ const mutations = {
     fieldState.gates = newGates;
   },
 
-  setObstacles: (fieldState:FieldState, newObstacles:Obstacle[]):void => {
+  setObstacles: (fieldState:FieldState, newObstacles:ObstacleField[]):void => {
     fieldState.obstacles = newObstacles;
   },
 
