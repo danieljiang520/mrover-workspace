@@ -514,6 +514,6 @@ export function obstacleDBToBoundingBox(obsOld:ObstacleMessage):ObstacleNewInter
   ];
   return {
     bottom_left_coordinate_meters: bottomLeftCoordMeters,
-    top_right_corrdinate_meters: topRightCoordMeters
+    top_right_coordinate_meters: topRightCoordMeters
   };
 }

@@ -57,7 +57,7 @@ module.exports = {
         "nav_state_name",
         "num_waypoints",
         "signal_strength",
-        "top_right_corrdinate_meters",
+        "top_right_coordinate_meters",
         "total_wps"
        ]
     }],

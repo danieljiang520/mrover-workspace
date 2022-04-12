@@ -133,7 +133,7 @@ export interface Obstacle {
   +z is forward (out) from the camera */
 export interface ObstacleNewInterfaceMessage {
   bottom_left_coordinate_meters:number[];
-  top_right_corrdinate_meters:number[];
+  top_right_coordinate_meters:number[];
 }
 
 /* Interface representing the Obstacle LCM. This must be the same as the
