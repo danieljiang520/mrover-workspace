@@ -9,7 +9,6 @@ ObstacleAvoidance::ObstacleAvoidance(const rapidjson::Document& roverConfig )
 
 //returns a bearing decision struct representing the desired NavState and bearing of the obstacle avoidance controller
 ObstacleAvoidance::BearingDecision ObstacleAvoidance::getDesiredBearingDecision(std::vector<Obstacle>& obstacles, Odometry roverOdom, Odometry dest){
-    cout << "num obstacles: " << obstacles.size() << "\n";
     //Get the vector of clear bearings and see if it is empty
     std::vector<double> clearBearings = getClearBearings(obstacles);
     
