@@ -18,28 +18,8 @@ class Rover;
 
 class Environment {
 private:
-<<<<<<< HEAD
-    Obstacle mObstacle{0.0, 0.0, -1.0};
-
-    // The rover's current target information from computer
-    // vision.
-    Target mTargetLeft{-1.0, 0.0, -1};
-    Target mTargetRight{-1.0, 0.0, -1};
-
-    // Reference to config variables
-    const rapidjson::Document& mConfig;
-
-    Filter<double> mLeftBearingFilter, mRightBearingFilter, mLeftDistanceFilter, mRightDistanceFilter;
-
-    Odometry mPostOne{}, mPostTwo{};
-
-    bool mHasPostOne = false, mHasPostTwo = false;
-
-    int baseGateID;
-=======
     std::vector<Obstacle> mObstacles;
     TargetList mTargets{};
->>>>>>> ankith/obstacle-avoidance
 
 public:
     explicit Environment(const rapidjson::Document& config);

@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-#include <cmath>
-=======
 #include <iostream>
 #include <vector>
->>>>>>> ankith/obstacle-avoidance
 
 #include "utilities.hpp"
 #include "environment.hpp"

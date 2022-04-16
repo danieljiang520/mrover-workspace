@@ -97,42 +97,4 @@ void throughZero(double& destinationBearing, const double currentBearing) {
             destinationBearing += 360;
         }
     }
-<<<<<<< HEAD
 } // throughZero()
-
-// Returns true if the rover can reach the input location without hitting the obstacle.
-// ASSUMPTION: There is an obstacle detected.
-// ASSUMPTION: The rover is driving straight.
-bool isLocationReachable(
-        const std::shared_ptr<Rover>& rover, const std::shared_ptr<Environment>& env, const rapidjson::Document& roverConfig,
-        double locDist, double distThresh
-) {
-    Obstacle const& obstacle = env->getObstacle();
-    double distToObs = obstacle.distance;
-    double bearToObs = std::min(obstacle.bearing, obstacle.rightBearing);
-    double bearToObsComplement = 90 - bearToObs;
-    double xComponentOfDistToObs = distToObs * cos(bearToObsComplement);
-
-    bool isReachable = false;
-
-    // if location - distThresh is closer than the obstacle, it's reachable
-    isReachable |= distToObs > locDist - distThresh;
-
-    // if obstacle is farther away in "x direction" than rover's width, it's reachable
-    isReachable |= xComponentOfDistToObs > roverConfig["roverMeasurements"]["width"].GetDouble() / 2;
-
-    return isReachable;
-} // isLocationReachable()
-
-// Returns true if an obstacle is detected, false otherwise.
-bool isObstacleDetected(const std::shared_ptr<Rover>& rover, const std::shared_ptr<Environment>& env) {
-    return env->getObstacle().distance >= 0;
-} // isObstacleDetected()
-
-// Returns true if distance from obstacle is within user-configurable threshold
-bool isObstacleInThreshold(const std::shared_ptr<Rover>& rover, const std::shared_ptr<Environment>& env, const rapidjson::Document& roverConfig) {
-    return env->getObstacle().distance <= roverConfig["navThresholds"]["obstacleDistanceThreshold"].GetDouble();
-} // isObstacleInThreshold()
-=======
-} // throughZero()
->>>>>>> ankith/obstacle-avoidance

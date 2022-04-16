@@ -81,7 +81,8 @@ import {
   Point2D,
   Waypoint,
   WaypointDrawOptions,
-  ZedGimbalPosition
+  ZedGimbalPosition,
+  ObstacleField
 } from '../../utils/types';
 import { canvasToOdom } from '../../utils/utils';
 import CanvasArTags from './ar_tags';
@@ -170,7 +171,7 @@ export default class Field extends Vue {
   private readonly obstacleDrawOptions!:ObstacleDrawOptions;
 
   @Getter
-  private readonly obstacles!:Obstacle[];
+  private readonly obstacles!:ObstacleField[];
 
   @Getter
   private readonly referencePoints!:Odom[];
@@ -212,7 +213,7 @@ export default class Field extends Vue {
   private readonly pushGate!:(newGate:Gate)=>void;
 
   @Mutation
-  private readonly pushObstacle!:(newObstacle:Obstacle)=>void;
+  private readonly pushObstacle!:(newObstacle:ObstacleField)=>void;
 
   @Mutation
   private readonly pushReferencePoint!:(newReferencePoint:Odom)=>void;

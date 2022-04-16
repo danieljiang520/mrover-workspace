@@ -7,11 +7,7 @@
 
 #include "utilities.hpp"
 #include "rover_msgs/NavStatus.hpp"
-<<<<<<< HEAD
-#include "obstacle_avoidance/simpleAvoidance.hpp"
-=======
 #include "gate_search/diamondGateSearch.hpp"
->>>>>>> ankith/obstacle-avoidance
 
 // Constructs a StateMachine object with the input lcm object.
 // Reads the configuration file and constructs a Rover objet with this
@@ -21,21 +17,10 @@ StateMachine::StateMachine(
         rapidjson::Document& config,
         std::shared_ptr<Rover> rover, std::shared_ptr<Environment> env, std::shared_ptr<CourseProgress> courseProgress,
         lcm::LCM& lcmObject
-<<<<<<< HEAD
-) : mConfig(config),
-    mRover(move(rover)), mEnv(move(env)), mCourseProgress(move(courseProgress)), mLcmObject(lcmObject),
-    mTimePoint(std::chrono::high_resolution_clock::now()),
-    mPrevTimePoint(mTimePoint) {
-    // TODO: fix, weak_from_this() should not be called in ctor, will always be null
-    mObstacleAvoidanceStateMachine = ObstacleAvoiderFactory(weak_from_this(),
-                                                            ObstacleAvoidanceAlgorithm::SimpleAvoidance, mRover,
-                                                            mConfig);
-=======
 ) : mConfig(config), mRover(move(rover)), mEnv(move(env)), mCourseProgress(move(courseProgress)),
     mLcmObject(lcmObject) {
     mSearchStateMachine = SearchFactory(weak_from_this(), SearchType::FROM_PATH_FILE, mRover, mConfig);
     mGateStateMachine = GateFactory(weak_from_this(), mConfig);
->>>>>>> ankith/obstacle-avoidance
 } // StateMachine()
 
 void StateMachine::setSearcher(SearchType type) {
@@ -130,9 +115,6 @@ void StateMachine::run() {
         }
     }
 
-<<<<<<< HEAD
-    std::this_thread::sleep_until(mTimePoint + LOOP_DURATION);
-=======
         case NavState::Done: {
             nextState = executeDone();
             break;
@@ -194,7 +176,6 @@ void StateMachine::run() {
         mRover->bearingPid().reset();
     }
     std::cerr << std::flush;
->>>>>>> ankith/obstacle-avoidance
 } // run()
 
 // Publishes the current navigation state to the nav status lcm channel.
@@ -233,12 +214,6 @@ NavState StateMachine::executeDone() {
  * @return Next state
  */
 NavState StateMachine::executeDrive() {
-<<<<<<< HEAD
-    Waypoint const& currentWaypoint = mCourseProgress->getCurrentWaypoint();
-    mEnv->setBaseGateID(currentWaypoint.id);
-    double dt = getDtSeconds();
-    if (mRover->drive(currentWaypoint.odom, mConfig["navThresholds"]["waypointDistance"].GetDouble(), dt)) {
-=======
     Waypoint const& nextWaypoint = mCourseProgress->getRemainingWaypoints().front();
     // double distance = estimateNoneuclid(mRover->odometry(), nextWaypoint.odom);
 
@@ -254,7 +229,6 @@ NavState StateMachine::executeDrive() {
         if (nextWaypoint.search || nextWaypoint.gate) {
             return NavState::ChangeSearchAlg;
         }
->>>>>>> ankith/obstacle-avoidance
         mCourseProgress->completeCurrentWaypoint();
         std::cout << "Completed waypoint" << std::endl;
         if (currentWaypoint.search) {
@@ -276,16 +250,6 @@ std::string StateMachine::stringifyNavState() const {
                     {NavState::BeginSearch,          "Change Search Algorithm"},
                     {NavState::Search,               "Search"},
                     {NavState::DriveToTarget,        "Drive to Target"},
-<<<<<<< HEAD
-                    {NavState::TurnAroundObs,        "Turn Around Obstacle"},
-                    {NavState::DriveAroundObs,       "Drive Around Obstacle"},
-                    {NavState::SearchTurnAroundObs,  "Search Turn Around Obstacle"},
-                    {NavState::SearchDriveAroundObs, "Search Drive Around Obstacle"},
-                    {NavState::BeginGateSearch,      "Gate Prepare"},
-                    {NavState::GateMakePath,         "Gate Make Path"},
-                    {NavState::GateTraverse,         "Gate Drive Path"},
-                    {NavState::GateTraverse,         "Gate Traverse"},
-=======
                     {NavState::GateSpin,             "Gate Spin"},
                     {NavState::GateSpinWait,         "Gate Spin Wait"},
                     {NavState::GateTurn,             "Gate Turn"},
@@ -297,7 +261,6 @@ std::string StateMachine::stringifyNavState() const {
                     {NavState::GateDriveToFarPost,   "Gate Drive to Far Post"},
                     {NavState::GateTurnToGateCenter, "Gate Turn to Gate Center"},
                     {NavState::GateDriveThrough,     "Gate Drive Through"},
->>>>>>> ankith/obstacle-avoidance
 
                     {NavState::Unknown,              "Unknown"}
             };

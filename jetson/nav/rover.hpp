@@ -37,19 +37,6 @@ enum class NavState {
     // Target Found States
     DriveToTarget = 28,
 
-<<<<<<< HEAD
-    // Obstacle Avoidance States
-    TurnAroundObs = 30,
-    DriveAroundObs = 31,
-    SearchTurnAroundObs = 32,
-    SearchDriveAroundObs = 33,
-
-    // Gate Search
-    BeginGateSearch = 40,
-    GateMakePath = 41,
-    GateTraverse = 42,
-
-=======
     // Gate Search States
     GateSpin = 40,
     GateSpinWait = 41,
@@ -62,8 +49,7 @@ enum class NavState {
     GateTurnToFarPost = 48,
     GateDriveToFarPost = 49,
     GateTurnToGateCenter = 50,
-    
->>>>>>> ankith/obstacle-avoidance
+
     // Unknown State
     Unknown = 255
 }; // AutonState
@@ -82,11 +68,7 @@ class Rover {
 public:
     Rover(const rapidjson::Document& config, lcm::LCM& lcm_in);
 
-<<<<<<< HEAD
-    bool drive(const Odometry& destination, double stopDistance, double dt);
-=======
     DriveStatus drive(std::shared_ptr<Environment> const& env, const Odometry& destination);
->>>>>>> ankith/obstacle-avoidance
 
     bool drive(double distance, double bearing, double threshold, double dt);
 
@@ -110,11 +92,8 @@ public:
 
     void setOdometry(Odometry const& odometry);
 
-<<<<<<< HEAD
-=======
     void updateTargets(std::shared_ptr<Environment>const &env, std::shared_ptr<CourseProgress> const& course);
 
->>>>>>> ankith/obstacle-avoidance
     void setState(NavState state);
 
     void setLongMeterInMinutes(double LongMeterInMinutes);
@@ -151,8 +130,6 @@ private:
 
     // The rover's current odometry information.
     Odometry mOdometry{};
-<<<<<<< HEAD
-=======
 
     // The rover's current target information from computer
     // vision.
@@ -174,5 +151,4 @@ private:
 
     //Obstacle Avoidance Manager
     ObstacleAvoidance mObstacleAvoider;
->>>>>>> ankith/obstacle-avoidance
 };

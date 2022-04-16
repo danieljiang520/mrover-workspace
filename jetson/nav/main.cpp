@@ -12,10 +12,7 @@
 #include "environment.hpp"
 #include "courseProgress.hpp"
 
-<<<<<<< HEAD
-=======
 #include "obstacle_avoidance/test_suites.hpp"
->>>>>>> ankith/obstacle-avoidance
 
 using namespace rover_msgs;
 

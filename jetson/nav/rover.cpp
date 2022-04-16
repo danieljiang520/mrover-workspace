@@ -12,70 +12,6 @@ Rover::Rover(const rapidjson::Document& config, lcm::LCM& lcmObject)
         : mConfig(config), mLcmObject(lcmObject),
           mBearingPid(config["bearingPid"]["kP"].GetDouble(),
                       config["bearingPid"]["kI"].GetDouble(),
-<<<<<<< HEAD
-                      config["bearingPid"]["kD"].GetDouble(), 360.0),
-          mLongMeterInMinutes(-1) {
-} // Rover(
-
-/***
- * Drive to the global position defined by destination, turning if necessary.
- *
- * @param destination   Global destination
- * @param stopDistance  If we are this distance or closer, stop
- * @param dt            Delta time in seconds
- * @return              Whether we have reached the target
- */
-bool Rover::drive(const Odometry& destination, double stopDistance, double dt) {
-    double distance = estimateDistance(mOdometry, destination);
-    double bearing = estimateBearing(mOdometry, destination);
-    return drive(distance, bearing, stopDistance, dt);
-} // drive()
-
-bool Rover::drive(double distance, double bearing, double threshold, double dt) {
-    if (distance < threshold) {
-        return true;
-    }
-
-    if (turn(bearing, dt)) {
-        double destinationBearing = mod(bearing, 360);
-        double turningEffort = mBearingPid.update(mOdometry.bearing_deg, destinationBearing, dt);
-        // When we drive to a target, we want to go as fast as possible so one of the sides is fixed at one and the other is 1 - abs(turningEffort)
-        // if we need to turn clockwise, turning effort will be positive, so leftVel will be 1, and rightVel will be in between 0 and 1
-        // if we need to turn ccw, turning effort will be negative, so rightVel will be 1 and leftVel will be in between 0 and 1
-        // TODO: use std::clamp
-        double leftVel = std::min(1.0, std::max(0.0, 1.0 + turningEffort));
-        double rightVel = std::min(1.0, std::max(0.0, 1.0 - turningEffort));
-        publishAutonDriveCmd(leftVel, rightVel);
-    }
-
-    return false;
-} // drive()
-
-
-/***
- *
- * @param destination
- * @param dt
- * @return
- */
-bool Rover::turn(Odometry const& destination, double dt) {
-    double bearing = estimateBearing(mOdometry, destination);
-    return turn(bearing, dt);
-} // turn()
-
-
-bool Rover::turn(double absoluteBearing, double dt) {
-    absoluteBearing = mod(absoluteBearing, 360);
-    throughZero(absoluteBearing, mOdometry.bearing_deg);
-    if (fabs(absoluteBearing - mOdometry.bearing_deg) <= mConfig["navThresholds"]["turningBearing"].GetDouble()) {
-        return true;
-    }
-    double turningEffort = mBearingPid.update(mOdometry.bearing_deg, absoluteBearing, dt);
-    // to turn in place we apply +turningEffort, -turningEffort on either side and make sure they're both within [-1, 1]
-    double leftVel = std::max(std::min(1.0, +turningEffort), -1.0);
-    double rightVel = std::max(std::min(1.0, -turningEffort), -1.0);
-    publishAutonDriveCmd(leftVel, rightVel);
-=======
                       config["bearingPid"]["kD"].GetDouble()),
           mLongMeterInMinutes(-1),
           mObstacleAvoider(config) {
@@ -149,7 +85,7 @@ bool Rover::turn(double bearing) {
     throughZero(bearing, mOdometry.bearing_deg);
     double turningBearingThreshold;
     turningBearingThreshold = mRoverConfig["navThresholds"]["turningBearing"].GetDouble();
-    
+
     if (fabs(bearing - mOdometry.bearing_deg) <= turningBearingThreshold) {
         return true;
     }
@@ -160,7 +96,6 @@ bool Rover::turn(double bearing) {
     double right_vel = std::max(std::min(1.0, -turningEffort), -1.0);
 //    std::cout << left_vel << ", " << right_vel << std::endl;
     publishAutonDriveCmd(left_vel, right_vel);
->>>>>>> ankith/obstacle-avoidance
     return false;
 } // turn()
 
@@ -193,11 +128,6 @@ void Rover::publishAutonDriveCmd(const double leftVel, const double rightVel) {
     mLcmObject.publish(autonDriveControlChannel, &driveControl);
 }
 
-<<<<<<< HEAD
-bool Rover::isTurningAroundObstacle(NavState currentState) {
-    return currentState == NavState::TurnAroundObs || currentState == NavState::SearchTurnAroundObs;
-} // isTurningAroundObstacle()
-=======
 void Rover::updateTargets(std::shared_ptr<Environment> const& env, std::shared_ptr<CourseProgress> const& course) {
     // TODO: I'm a little skeptical about how this function fits into the architecture.
     // TODO: It seems like it should be a part of the environment, not the rover.
@@ -251,7 +181,6 @@ void Rover::updateTargets(std::shared_ptr<Environment> const& env, std::shared_p
         mLongMeterInMinutes = 60 / (EARTH_CIRCUM * cosine / 360);
     }
 }
->>>>>>> ankith/obstacle-avoidance
 
 // Gets a reference to the rover's current navigation state.
 NavState const& Rover::currentState() const {
