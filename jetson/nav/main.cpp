@@ -41,7 +41,7 @@ int main() {
     auto rover = std::make_shared<Rover>(config, lcm);
     auto stateMachine = std::make_shared<StateMachine>(config, rover, env, courseProgress, lcm);
 
-    bool test = true;
+    bool test = false;
     if (test) {
         // Run tests
         run_tests(config);

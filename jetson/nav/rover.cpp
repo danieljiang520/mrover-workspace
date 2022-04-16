@@ -28,6 +28,7 @@ DriveStatus Rover::drive(std::shared_ptr<Environment> const& env, const Odometry
     //double bearing = calcBearing(mOdometry, destination);
     ObstacleAvoidance::BearingDecision bearingDecision = mObstacleAvoider.getDesiredBearingDecision(env->getObstacles(), mOdometry, destination);
     double bearing = bearingDecision.desiredBearing;
+
     if (bearingDecision.obstacleControllerOutputState == NavState::Turn){
         //breakaway to turn state - we say we're off course and the turn controller will actually turn away from obstacle
         return DriveStatus::TurnFromObstacle;
