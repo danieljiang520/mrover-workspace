@@ -18,7 +18,7 @@
 #include "courseProgress.hpp"
 #include "environment.hpp"
 #include "pid.hpp"
-
+#include "obstacle_avoidance/obstacleAvoidance.hpp"
 
 using namespace rover_msgs;
 
@@ -37,6 +37,7 @@ enum class NavState {
     // Target Found States
     DriveToTarget = 28,
 
+<<<<<<< HEAD
     // Obstacle Avoidance States
     TurnAroundObs = 30,
     DriveAroundObs = 31,
@@ -48,6 +49,21 @@ enum class NavState {
     GateMakePath = 41,
     GateTraverse = 42,
 
+=======
+    // Gate Search States
+    GateSpin = 40,
+    GateSpinWait = 41,
+    GateTurn = 42,
+    GateDrive = 43,
+    GateTurnToCentPoint = 44,
+    GateDriveToCentPoint = 45,
+    GateFace = 46,
+    GateDriveThrough = 47,
+    GateTurnToFarPost = 48,
+    GateDriveToFarPost = 49,
+    GateTurnToGateCenter = 50,
+    
+>>>>>>> ankith/obstacle-avoidance
     // Unknown State
     Unknown = 255
 }; // AutonState
@@ -56,7 +72,8 @@ enum class NavState {
 enum class DriveStatus {
     Arrived,
     OnCourse,
-    OffCourse
+    OffCourse,
+    TurnFromObstacle
 }; // DriveStatus
 
 // This class creates a Rover object which can perform operations that
@@ -65,7 +82,11 @@ class Rover {
 public:
     Rover(const rapidjson::Document& config, lcm::LCM& lcm_in);
 
+<<<<<<< HEAD
     bool drive(const Odometry& destination, double stopDistance, double dt);
+=======
+    DriveStatus drive(std::shared_ptr<Environment> const& env, const Odometry& destination);
+>>>>>>> ankith/obstacle-avoidance
 
     bool drive(double distance, double bearing, double threshold, double dt);
 
@@ -89,6 +110,11 @@ public:
 
     void setOdometry(Odometry const& odometry);
 
+<<<<<<< HEAD
+=======
+    void updateTargets(std::shared_ptr<Environment>const &env, std::shared_ptr<CourseProgress> const& course);
+
+>>>>>>> ankith/obstacle-avoidance
     void setState(NavState state);
 
     void setLongMeterInMinutes(double LongMeterInMinutes);
@@ -98,8 +124,6 @@ private:
     /* Private Member Functions */
     /*************************************************************************/
     void publishAutonDriveCmd(double leftVel, double rightVel);
-
-    static bool isTurningAroundObstacle(NavState currentState);
 
     /*************************************************************************/
     /* Private Member Variables */
@@ -127,4 +151,28 @@ private:
 
     // The rover's current odometry information.
     Odometry mOdometry{};
+<<<<<<< HEAD
+=======
+
+    // The rover's current target information from computer
+    // vision.
+    Target mTargetLeft{-1.0, 0.0, 0};
+    Target mTargetRight{-1.0, 0.0, 0};
+
+    // Cached Target
+    // Left means left in the pixel space
+    Target mCacheTargetLeft{-1.0, 0.0, 0};
+    Target mCacheTargetRight{-1.0, 0.0, 0};
+
+    // Count of misses with cache
+    int mCountLeftMisses = 0;
+    int mCountRightMisses = 0;
+
+    // Count hits for avoiding FPs
+    int mCountLeftHits = 0;
+    int mCountRightHits = 0;
+
+    //Obstacle Avoidance Manager
+    ObstacleAvoidance mObstacleAvoider;
+>>>>>>> ankith/obstacle-avoidance
 };

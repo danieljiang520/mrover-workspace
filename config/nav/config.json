@@ -36,6 +36,8 @@
 		"obstacleDistanceThreshold": 2.5,
 		"cacheMissMax": 20,
 		"noTargetDist": -1,
+		"maximumPostWidth": 3.0,
+		"clearBearingComparisonThreshold": 0.000001,
 		"waypointRadius": 20.0
 	},
 
@@ -78,8 +80,17 @@
 		"spiralSearchPoints": "jetson/nav/search/spiral_search_points.txt"
 	},
 
+<<<<<<< HEAD
 	"gate": {
 		"filterSize": 4,
         "filterProportion": 0.75
+=======
+	"latencyThreshold":
+	{
+		"threshold": 5.0
+		
+>>>>>>> ankith/obstacle-avoidance
 	}
+
 }
+

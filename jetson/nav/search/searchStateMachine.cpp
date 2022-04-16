@@ -59,12 +59,18 @@ NavState SearchStateMachine::executeSearch() {
         }
     }
 
+<<<<<<< HEAD
     Odometry const& nextSearchPoint = mSearchPoints.front();
     double dt = sm->getDtSeconds();
     if (drivenToFirstPost) {
         std::cout << mSearchPoints.size() << std::endl;
     }
     if (rover->drive(nextSearchPoint, mConfig["navThresholds"]["waypointDistance"].GetDouble(), dt)) {
+=======
+    DriveStatus driveStatus = rover->drive(sm->getEnv(), mSearchPoints.front());
+
+    if (driveStatus == DriveStatus::Arrived) {
+>>>>>>> ankith/obstacle-avoidance
         mSearchPoints.pop_front();
         if (mSearchPoints.empty()) {
             return NavState::Done;
@@ -84,6 +90,7 @@ NavState SearchStateMachine::executeDriveToTarget() {
     Target const& rightTarget = env->getRightTarget();
     double currentBearing = rover->odometry().bearing_deg;
 
+<<<<<<< HEAD
     double distance, bearing;
     if (lastWaypoint.gate) {
         if (env->hasGateLocation()) {
@@ -122,6 +129,28 @@ NavState SearchStateMachine::executeDriveToTarget() {
         } else {
             std::cerr << "Lost the target" << std::endl;
             return NavState::Search;
+=======
+    DriveStatus driveStatus;
+
+    double distance = rover->leftCacheTarget().distance;
+    double bearing = rover->leftCacheTarget().bearing + rover->odometry().bearing_deg;
+
+    driveStatus = rover->drive(distance, bearing, true);
+
+    if (driveStatus == DriveStatus::Arrived) {
+        mSearchPoints.clear();
+        if (sm->getCourseState()->getRemainingWaypoints().front().gate) {
+            sm->mGateStateMachine->mGateSearchPoints.clear();
+            double absAngle = mod(rover->odometry().bearing_deg + rover->leftCacheTarget().bearing, 360);
+            sm->mGateStateMachine->lastKnownRightPost.odom = createOdom(
+                    rover->odometry(),
+                    absAngle,
+                    rover->leftCacheTarget().distance,
+                    rover
+            );
+            sm->mGateStateMachine->lastKnownRightPost.id = rover->leftCacheTarget().id;
+            return NavState::GateSpin;
+>>>>>>> ankith/obstacle-avoidance
         }
     }
 

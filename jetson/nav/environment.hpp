@@ -9,6 +9,7 @@
 #include "filter.hpp"
 #include "rover_msgs/Obstacle.hpp"
 #include "rover_msgs/TargetList.hpp"
+#include "rover_msgs/ObstacleList.hpp"
 
 using Eigen::Vector2d;
 using namespace rover_msgs;
@@ -17,6 +18,7 @@ class Rover;
 
 class Environment {
 private:
+<<<<<<< HEAD
     Obstacle mObstacle{0.0, 0.0, -1.0};
 
     // The rover's current target information from computer
@@ -34,13 +36,18 @@ private:
     bool mHasPostOne = false, mHasPostTwo = false;
 
     int baseGateID;
+=======
+    std::vector<Obstacle> mObstacles;
+    TargetList mTargets{};
+>>>>>>> ankith/obstacle-avoidance
 
 public:
     explicit Environment(const rapidjson::Document& config);
 
-    Obstacle getObstacle();
+    std::vector<Obstacle> & getObstacles();
 
-    void setObstacle(Obstacle const& obstacle);
+    void setObstacles(const std::vector<Obstacle> & obstacles);
+    void setObstacles(const ObstacleList* obstacleList);
 
     void setBaseGateID(int b);
 

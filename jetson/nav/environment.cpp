@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 #include <cmath>
+=======
+#include <iostream>
+#include <vector>
+>>>>>>> ankith/obstacle-avoidance
 
 #include "utilities.hpp"
 #include "environment.hpp"
@@ -12,12 +17,21 @@ Environment::Environment(const rapidjson::Document& config) :
         mLeftDistanceFilter(config["gate"]["filterSize"].GetInt(), config["gate"]["filterProportion"].GetDouble()),
         mRightDistanceFilter(config["gate"]["filterSize"].GetInt(), config["gate"]["filterProportion"].GetDouble()) {}
 
-void Environment::setObstacle(Obstacle const& obstacle) {
-    mObstacle = obstacle;
+void Environment::setObstacles(const std::vector<Obstacle> &obstacles) {
+    mObstacles = obstacles;
 }
 
-Obstacle Environment::getObstacle() {
-    return mObstacle;
+void Environment::setObstacles(const ObstacleList* obstacleList) {
+    mObstacles = {};
+    mObstacles.reserve(obstacleList->numObstacles);
+
+    for (int i = 0; i < obstacleList->numObstacles; ++i) {
+        mObstacles.push_back(obstacleList->obstacles[i]);
+    }
+}
+
+std::vector<Obstacle> & Environment::getObstacles() {
+    return mObstacles;
 }
 
 Target Environment::getLeftTarget() {

@@ -10,7 +10,12 @@
 #include "courseProgress.hpp"
 #include "search/searchStateMachine.hpp"
 #include "gate_search/gateStateMachine.hpp"
+<<<<<<< HEAD
 #include "obstacle_avoidance/simpleAvoidance.hpp"
+=======
+#include "environment.hpp"
+#include "courseProgress.hpp"
+>>>>>>> ankith/obstacle-avoidance
 
 
 using namespace rover_msgs;
@@ -32,6 +37,7 @@ public:
 
     void run();
 
+<<<<<<< HEAD
     void updateObstacleElements(double leftBearing, double rightBearing, double distance);
 
     void updateObstacleDistance(double distance);
@@ -39,6 +45,9 @@ public:
     void setSearcher(SearchType type);
 
     void setGateSearcher();
+=======
+    void setSearcher(SearchType type, const std::shared_ptr<Rover>& rover, const rapidjson::Document& roverConfig);
+>>>>>>> ankith/obstacle-avoidance
 
     std::shared_ptr<Environment> getEnv();
 
@@ -46,10 +55,15 @@ public:
 
     std::shared_ptr<Rover> getRover();
 
+<<<<<<< HEAD
     lcm::LCM& getLCM();
 
     double getDtSeconds();
 
+=======
+    bool pushNewRoverStatus();
+    
+>>>>>>> ankith/obstacle-avoidance
     /*************************************************************************/
     /* Public Member Variables */
     /*************************************************************************/
@@ -70,6 +84,11 @@ private:
 
     std::string stringifyNavState() const;
 
+<<<<<<< HEAD
+=======
+    bool isWaypointReachable(double distance);
+
+>>>>>>> ankith/obstacle-avoidance
     /*************************************************************************/
     /* Private Member Variables */
     /*************************************************************************/
@@ -89,8 +108,11 @@ private:
     // Search pointer to control search states
     std::shared_ptr<SearchStateMachine> mSearchStateMachine;
 
+<<<<<<< HEAD
     // Avoidance pointer to control obstacle avoidance states
     std::shared_ptr<ObstacleAvoidanceStateMachine> mObstacleAvoidanceStateMachine;
 
     time_point mTimePoint, mPrevTimePoint;
+=======
+>>>>>>> ankith/obstacle-avoidance
 }; // StateMachine

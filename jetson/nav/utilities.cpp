@@ -97,6 +97,7 @@ void throughZero(double& destinationBearing, const double currentBearing) {
             destinationBearing += 360;
         }
     }
+<<<<<<< HEAD
 } // throughZero()
 
 // Returns true if the rover can reach the input location without hitting the obstacle.
@@ -132,3 +133,6 @@ bool isObstacleDetected(const std::shared_ptr<Rover>& rover, const std::shared_p
 bool isObstacleInThreshold(const std::shared_ptr<Rover>& rover, const std::shared_ptr<Environment>& env, const rapidjson::Document& roverConfig) {
     return env->getObstacle().distance <= roverConfig["navThresholds"]["obstacleDistanceThreshold"].GetDouble();
 } // isObstacleInThreshold()
+=======
+} // throughZero()
+>>>>>>> ankith/obstacle-avoidance

@@ -1,6 +1,13 @@
 package rover_msgs;
 
+<<<<<<< HEAD
 struct ObstacleList {
     int32_t numObstacles;
 	Obstacle obstacles[1];
+=======
+//+x is to the right of camera, +y is down from camera, +z is forward (out) from the camera
+struct ObstacleList {
+    int32_t numObstacles;
+	Obstacle obstacles[numObstacles];
+>>>>>>> ankith/obstacle-avoidance
 }

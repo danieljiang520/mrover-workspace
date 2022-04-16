@@ -10,6 +10,37 @@
 
 using namespace rover_msgs;
 
+enum Quadrant {
+    BottomLeft = 3,
+    BottomRight = 4,
+    TopLeft = 2,
+    TopRight = 1,
+};
+
+class Point {
+public:
+    Point();
+    Point(double x_in, double y_in);
+    Point(const Odometry &point);
+    double getX() const;
+    double getY() const;
+    void setX(int x_in);
+    void setY(int y_in);
+    Odometry toOdometry() const;
+    double distance(const Point& other) const;
+    static Point Map(const Point& input, const Point& a_in, const Point& b_in, const Point &a_out, const Point &b_out);
+    Quadrant getQuadrantIn() const;
+    Point operator+(const Point& p) const;
+    Point operator-(const Point& p) const;
+    double operator*(const Point& p) const; // dot product
+    Point operator*(double s) const;
+    
+    //friend std::ostream& operator<<(std::ostream& os, const Point &p);
+private:
+    double x;
+    double y;
+};
+
 const int EARTH_RADIUS = 6371000; // meters
 const int EARTH_CIRCUM = 40075000; // meters
 const double PI = 3.141592654; // radians
@@ -34,13 +65,3 @@ double mod(double degree, int modulus);
 void throughZero(double& destinationBearing, double currentBearing);
 
 void clear(std::deque<Waypoint>& aDeque);
-
-bool isTargetReachable(const std::shared_ptr<Rover>&, const std::shared_ptr<Environment>& env, const rapidjson::Document& roverConfig);
-
-bool isLocationReachable(
-        const std::shared_ptr<Rover>&, const std::shared_ptr<Environment>&, const rapidjson::Document& roverConfig, double locDist, double distThresh
-);
-
-bool isObstacleDetected(const std::shared_ptr<Rover>& rover, const std::shared_ptr<Environment>& env);
-
-bool isObstacleInThreshold(const std::shared_ptr<Rover>& rover, const std::shared_ptr<Environment>& env, const rapidjson::Document& roverConfig);
