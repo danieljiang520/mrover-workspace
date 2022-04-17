@@ -56,6 +56,7 @@ module.exports = {
         "longitude_min",
         "nav_state_name",
         "num_waypoints",
+        "obstacle_list",
         "signal_strength",
         "top_right_coordinate_meters",
         "total_wps"
@@ -233,6 +234,7 @@ module.exports = {
         "longitude_min",
         "nav_state_name",
         "num_waypoints",
+        "obstacle_list",
         "signal_strength",
         "total_wps"
        ]

@@ -390,7 +390,7 @@ export default class NavSimulator extends Vue {
           this.navPulse = true;
           this.setNavStatus(msg.message);
         }
-        else if (msg.topic === '/obstacle') {
+        else if (msg.topic === '/obstacle_list') {
           if (!this.simulatePercep) {
             this.percepPulse = true;
             this.setObstacleMessage(msg.message);
@@ -433,7 +433,7 @@ export default class NavSimulator extends Vue {
         { topic: '/autonomous',     type: 'Joystick' },
         { topic: '/auton_drive_control',     type: 'AutonDriveControl' },
         { topic: '/nav_status',     type: 'NavStatus' },
-        { topic: '/obstacle',       type: 'Obstacle' },
+        { topic: '/obstacle_list',  type: 'ObstacleList' },
         { topic: '/odometry',       type: 'Odometry' },
         { topic: '/rr_drop_init',   type: 'RepeaterDropInit' },
         { topic: '/target_list',    type: 'TargetList' },
@@ -452,8 +452,8 @@ export default class NavSimulator extends Vue {
       }
 
       if (this.simulatePercep) {
-        const obs:any = Object.assign(this.obstacleMessage, { type: 'Obstacle' });
-        this.publish('/obstacle', obs, true);
+        const obs:any = Object.assign(this.obstacleMessage, { type: 'ObstacleList' });
+        this.publish('/obstacle_list', obs, true);
 
         /* eslint no-magic-numbers: ["error", { "ignore": [0, 1] }] */
         const targetList:any = { targetList: this.targetList, type: 'TargetList' };
