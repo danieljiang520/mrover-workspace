@@ -251,7 +251,6 @@ export default class SimSettings extends Vue {
   private set maxFalsePosIn(newVal:number) {
     this.setMaxFalsePos(newVal);
   }
-
   private get path_type():string {
     return this.projectedPointsMessage.path_type;
   }
